@@ -1,3 +1,4 @@
+# event_class.py
 # Class for event objects
 class Event:
 

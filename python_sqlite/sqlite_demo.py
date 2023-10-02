@@ -1,9 +1,13 @@
+# sqlite_demo.py
+# Create a database file called eventDB.db 
+# creates a table called events
+
 import sqlite3
 from event_class import Event
 
 # creating database file called eventDB.db 
 # (change to eventDB.db to :memory: to create a database in RAM for testing)
-connection = sqlite3.connect("eventDB.db") 
+connection = sqlite3.connect("eventDB.db")    #creating connection object
 
 cursor = connection.cursor()    #creating cursor object
 
@@ -62,13 +66,14 @@ def get_event_by_start_date(start_date):
 
 
 
+
 ## TEST CODE ##
 
 
 # update event in table
 event1 = Event(1, 'Sports Day', '2023-09-27', '2023-09-27', '09:00', '17:00', 'Sports Day', 'Sports Hall', 'Once', 'Once', 0)
 event2 = Event(2, 'Meeting', '2023-10-05', '2023-10-05', '09:00', '17:00', 'Meeting', 'Meeting Room', 'Wed', 'W', 10)
-event3 = Event(3, 'Open House', '2023-30-09', '2023-30-09', '09:00', '17:00', 'Open House', 'Hall', 'Once', 'Once', 0)
+event3 = Event(3, 'Open House', '2023-09-09', '2023-10-09', '09:00', '17:00', 'Open House', 'Hall', 'Once', 'Once', 0)
 
 insert_event(event1)
 insert_event(event2)
@@ -85,9 +90,6 @@ print(events)
 # update event with id 1
 event1.name = "Sports Day 2023"
 edit_event(event1)
-
-# remove event with id 2
-remove_event(2)
 
 print("\n*********************************\n")
 # search for all events
