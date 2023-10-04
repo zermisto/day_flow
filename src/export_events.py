@@ -4,7 +4,6 @@
 
 import sqlite3
 import csv
-from event_class import Event
 
 connection = sqlite3.connect("eventDB.db")    #creating connection object
 
@@ -44,7 +43,7 @@ def export_events_to_csv(start_date, end_date, filename):
                 'Repeat Pattern': event[9],
                 'Repeat Count': event[10]
             })
-
+    
     print(f"Selected events have been exported to '{filename}'.")
 
 # Example usage of exporting events to CSV
