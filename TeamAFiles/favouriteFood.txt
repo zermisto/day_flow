@@ -1,1 +1,1 @@
-King = Curry, Banana, Chicken . Toiek = butter chicken, pork, beef 
+King = Curry, Banana, Punch . Toiek = butter chicken, pork, beef 
