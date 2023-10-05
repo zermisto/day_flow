@@ -1,0 +1,15 @@
+﻿Personal Calendar Manager
+
+
+2023-09-14: Only two use case narratives so far. 
+2023-09-21: Functional flow is quite simple… but might be adequate. 
+2023-09-28: “Backend” architecture is reasonable but “front end” really doesn’t make sense. 
+2023-10-04: Good that you have a class diagram, but I’m SURE there must be more than one class in your domain!
+
+No coding standards! (That was last week’s assignment)
+
+Good that your python files have header comments, but PLEASE include the author name.
+
+Derived files like the python cache files should not be in the repository. 
+
+
