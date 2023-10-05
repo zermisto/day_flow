@@ -12,10 +12,10 @@ Personal Calendar App (created by King, Roong, Mhon, Toiek)
 * Export events for a specified date range in CSV format
 
 # Problem Definition
-Team B edited here
+
 new last line
 <<<<<<< HEAD
-new last line
+
 =======
 add some content
 >>>>>>> e01f4fc1ba98cacc3f045428c1e16a0031729d00
