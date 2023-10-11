@@ -1,3 +1,7 @@
+# search_engine.py
+# Search engine for seeking for the specific event
+# Created by DayFlow
+
 import  sqlite3
 
 connection = sqlite3.connect("eventDB.db")

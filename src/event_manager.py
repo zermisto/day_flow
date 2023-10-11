@@ -1,5 +1,7 @@
 # event_class.py
 # Class for event objects
+# Created by DayFlow
+
 class event:
 
     def __init__(self, id, name, start_date, end_date, start_time, end_time, description, location, repeat_every, repeat_pattern, repeat_count):
