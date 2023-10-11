@@ -23,6 +23,8 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle('Calendar')
+        self.setFixedWidth(500)
+        self.setFixedHeight(500)
         self.setup_ui()
         self.show()
 
