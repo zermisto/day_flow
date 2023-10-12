@@ -16,4 +16,4 @@ Derived files like the python cache files should not be in the repository.
 
 Good Lab 6 reports! (You really only needed to create one, but that’s fine.)
 
-Good progress with code! But please put the actual code author(s) in the header comments.
+Good progress with code! But please put the actual code author(s) in the header comments. AND you removed py cache!
