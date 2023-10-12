@@ -12,4 +12,8 @@ Good that your python files have header comments, but PLEASE include the author 
 
 Derived files like the python cache files should not be in the repository. 
 
+2023-10-12:  Thank you for extracting your coding standards into a separate file. But you don’t have any rules about comments.
 
+Good Lab 6 reports! (You really only needed to create one, but that’s fine.)
+
+Good progress with code! But please put the actual code author(s) in the header comments.
