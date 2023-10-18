@@ -1,6 +1,6 @@
 # event_class.py
 # Class for event objects
-# Created by DayFlow
+# Created by King, 1st October 2023
 
 class event:
 

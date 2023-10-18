@@ -1,6 +1,7 @@
 # export_events.py 
 # Export events within a date range to a CSV file
 # Ask the user for a start date, end date, and CSV file name
+# Created by Toiek, 4th October 2023
 
 import sqlite3
 import csv

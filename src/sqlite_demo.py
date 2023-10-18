@@ -1,7 +1,7 @@
 # sqlite_demo.py
 # Create a database file called eventDB.db 
 # Creates a table called events
-# Created by DayFlow
+# Created by King, 1st October 2023
 
 import sqlite3
 from event_manager import event

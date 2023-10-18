@@ -1,6 +1,6 @@
 # main_ui.py
 # GUI for the Personal Calendar Application
-# Created by DayFlow
+# Created by Mhon, 4th October 2023
 
 from calendar import Calendar
 from PyQt5.QtWidgets import (
