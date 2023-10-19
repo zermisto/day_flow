@@ -1,10 +1,10 @@
-# export_events.py 
+# export_events.py
 # Export events within a date range to a CSV file
 # Ask the user for a start date, end date, and CSV file name
+# Created by Toiek, 4th October 2023
 
 import sqlite3
 import csv
-from event_class import Event
 
 connection = sqlite3.connect("eventDB.db")    #creating connection object
 
@@ -17,18 +17,17 @@ def export_events_to_csv(start_date, end_date, filename):
     filename = input("Enter the CSV file name (make sure to add .csv at the end): ")
 
     with connection:
-        cursor.execute("SELECT * FROM events WHERE start_date BETWEEN ? AND ?", (start_date, end_date))
+        cursor.execute("SELECT * FROM events WHERE start_date BETWEEN ? AND ?", 
+                       (start_date, end_date))
         selected_events = cursor.fetchall()
 
     if not selected_events: # if selected_events is empty
         print("No events found within the specified date range.")
         return
-
     with open(filename, mode='w', newline='') as csv_file: 
-        fieldnames = ['ID', 'Name', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Description', 'Location',
-                      'Repeat Every', 'Repeat Pattern', 'Repeat Count']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        
+        fieldnames = ['ID', 'Name', 'Start Date', 'End Date', 'Start Time', 'End Time', 
+                      'Description', 'Location', 'Repeat Every', 'Repeat Pattern', 'Repeat Count']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)   
         writer.writeheader()
         for event in selected_events:
             writer.writerow({
@@ -44,7 +43,6 @@ def export_events_to_csv(start_date, end_date, filename):
                 'Repeat Pattern': event[9],
                 'Repeat Count': event[10]
             })
-
     print(f"Selected events have been exported to '{filename}'.")
 
 # Example usage of exporting events to CSV

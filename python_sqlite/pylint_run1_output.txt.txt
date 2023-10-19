@@ -1,0 +1,13 @@
+************* Module export_events
+export_events.py:1:18: C0303: Trailing whitespace (trailing-whitespace)
+export_events.py:20:0: C0301: Line too long (103/100) (line-too-long)
+export_events.py:27:58: C0303: Trailing whitespace (trailing-whitespace)
+export_events.py:28:0: C0301: Line too long (114/100) (line-too-long)
+export_events.py:31:0: C0303: Trailing whitespace (trailing-whitespace)
+export_events.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+export_events.py:14:0: C0116: Missing function or method docstring (missing-function-docstring)
+export_events.py:27:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+export_events.py:7:0: W0611: Unused Event imported from event_class (unused-import)
+
+-----------------------------------
+Your code has been rated at 6.25/10
