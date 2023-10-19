@@ -13,7 +13,7 @@ cursor = connection.cursor()    #creating cursor object
 
 with connection:    #creating table called events
     cursor.execute(
-        """CREATE TABLE events (
+        """CREATE TABLE IF NOT EXISTS events (
             id integer, 
             name text, 
             start_date text,

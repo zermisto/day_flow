@@ -1,10 +1,12 @@
 # main_ui.py
 # GUI for the Personal Calendar Application
-# Created by Mhon, 4th October 2023
+# Created by Roong, 4th October 2023
+
+from create_event import CreateEventPopup
 
 from calendar import Calendar
 from PyQt5.QtWidgets import (
-    QApplication,
+    QApplication,   
     QMainWindow,
     QWidget,
     QVBoxLayout,
@@ -15,6 +17,7 @@ from PyQt5.QtWidgets import (
     QMenu,
     QAction,
     QMessageBox,
+    QDialog
 )
 from PyQt5.QtCore import Qt, QDate
 import sys #
@@ -38,6 +41,7 @@ class MainWindow(QMainWindow):
         # Create a "Create Event" button
         create_event_button = QPushButton('+ Create', self)
 
+
         # Create a search bar
         search_bar = QLineEdit(self)
         search_bar.setPlaceholderText('Search for Events')
@@ -46,7 +50,7 @@ class MainWindow(QMainWindow):
 
         # Add "Create Event" button and search bar to the top bar layout
         top_bar_layout.addWidget(create_event_button)
-        top_bar_layout.addWidget(search_bar)
+        top_bar_layout.addWidget(search_bar)  
 
         # Create a vertical layout for the central widget
         layout = QVBoxLayout(central_widget)
@@ -72,6 +76,9 @@ class MainWindow(QMainWindow):
         # Set the layout for the central widget
         central_widget.setLayout(layout)
 
+        # Connect the create_event_button clicked signal to the show_event_dialog slot
+        create_event_button.clicked.connect(self.show_event_dialog)
+
     def show_popup(self, date):
         # Create a popup menu
         popup_menu = QMenu(self)
@@ -86,9 +93,20 @@ class MainWindow(QMainWindow):
         popup_menu.exec_(pos)
 
     def popup_message(self, date):
-        QMessageBox.information(self, 'Selected Date', f'You clicked on {date.toString()}')
+        QMessageBox.information(self, 'Selected Date', f'You clicked on {date.toString()}')        
+
+    def show_event_dialog(self):
+        # Create an instance of the event creation dialog
+        event_dialog = QDialog()
+        ui = CreateEventPopup()                  
+        ui.setupUi(event_dialog)
+
+        # Show the dialog
+        event_dialog.exec_()
 
 if __name__ == '__main__':
     App = QApplication([])                                               
     cal = MainWindow() 
     sys.exit(App.exec_()) 
+
+    

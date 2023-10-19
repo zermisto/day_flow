@@ -1,6 +1,6 @@
 # search_engine.py
 # Search engine for seeking for the specific event
-# Created by Roong, 10th October 2023
+# Created by Mhon, 10th October 2023
 
 import  sqlite3
 
