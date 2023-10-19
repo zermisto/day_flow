@@ -14,12 +14,12 @@ Derived files like the python cache files should not be in the repository.
 
 2023-10-12:  Thank you for extracting your coding standards into a separate file. But you don’t have any rules about comments.
 
+Good Lab 6 reports! (You really only needed to create one, but that’s fine.)
+
+Good progress with code! But please put the actual code author(s) in the header comments. AND you removed py cache!
+
 2023-10-19: Your test plan does a reasonable job of testing individual data items. But you do not have test cases for entire functions, e.g. creating a new event, etc. Functional tests are about more than validation. (Actually what you’ve created is more like unit test cases.) So your plan not really complete. 
 
 It would be better to store the spreadsheet source, so you can add/modify test cases, plus use the spreadsheet to organize your actual testing.
 Good to see that you are updating source files (including documentation).
 
-
-Good Lab 6 reports! (You really only needed to create one, but that’s fine.)
-
-Good progress with code! But please put the actual code author(s) in the header comments. AND you removed py cache!
