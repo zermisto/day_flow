@@ -25,7 +25,12 @@ with connection:    #creating table called events
             repeat_every text,
             repeat_pattern text,
             repeat_count integer
-            )""")
+        )""")
+    # cursor.execute(
+    #     """DROP TABLE events
+    #     """
+    # )
+    
     
 # insert event into table
 def insert_event(event):
@@ -53,39 +58,21 @@ def remove_event(id):
     with connection:
         cursor.execute("DELETE from events WHERE id=:id", {'id': id})
 
-# search for event by name 
-def get_event_by_name(name):
-    cursor.execute("SELECT * FROM events WHERE name=:name", {'name': name})
-    return cursor.fetchall()
-
-# search for event by start date
-def get_event_by_start_date(start_date):
-    cursor.execute("SELECT * FROM events WHERE start_date=:start_date", {'start_date': start_date})
-    return cursor.fetchall()
-
 
 ## TEST CODE ##
+def test_code():
+    # update event in table
+    event1 = event(1, 'Sports Day', '2023-09-27', '2023-09-27', '09:00', '17:00', 'Sports Day', 'Sports Hall', 'Once', 'Once', 0)
+    event2 = event(2, 'Meeting', '2023-10-05', '2023-10-05', '09:00', '17:00', 'Meeting', 'Meeting Room', 'Wed', 'W', 10)
+    event3 = event(3, 'Open House', '2023-09-09', '2023-10-09', '09:00', '17:00', 'Open House', 'Hall', 'Once', 'Once', 0)
 
-# update event in table
-event1 = event(1, 'Sports Day', '2023-09-27', '2023-09-27', '09:00', '17:00', 'Sports Day', 'Sports Hall', 'Once', 'Once', 0)
-event2 = event(2, 'Meeting', '2023-10-05', '2023-10-05', '09:00', '17:00', 'Meeting', 'Meeting Room', 'Wed', 'W', 10)
-event3 = event(3, 'Open House', '2023-09-09', '2023-10-09', '09:00', '17:00', 'Open House', 'Hall', 'Once', 'Once', 0)
+    insert_event(event1)
+    insert_event(event2)
+    insert_event(event3)
 
-insert_event(event1)
-insert_event(event2)
-insert_event(event3)
-
-# search for events with name containing "Sports Day"
-events = get_event_by_name("Sports Day")
-print(events)
-
-# search for events with date containing "2023-10-05"
-events = get_event_by_start_date("2023-10-05")
-print(events)
-
-# update event with id 1
-event1.name = "Sports Day 2023"
-edit_event(event1)
+    # update event with id 1
+    event1.name = "Sports Day 2023"
+    edit_event(event1)
 
 print("\n*********************************\n")
 # search for all events

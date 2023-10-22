@@ -12,6 +12,8 @@
 # Created by Roong, 20th October 2023
 
 import sys
+import search_engine
+import sqlite_demo
 from create_event import CreateEventPopup
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
@@ -69,31 +71,13 @@ class Ui_Form(object):
         self.monthDisplay.setRowCount(5)
         self.monthDisplay.setObjectName("Month Widget")
         self.monthDisplay.setColumnCount(7)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setVerticalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignCenter)
-        self.monthDisplay.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setHorizontalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setHorizontalHeaderItem(5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.monthDisplay.setHorizontalHeaderItem(6, item)
+        for i in range(5):
+            item = QtWidgets.QTableWidgetItem()
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.monthDisplay.setVerticalHeaderItem(i, item)
+        for i in range(7):
+            item = QtWidgets.QTableWidgetItem()
+            self.monthDisplay.setHorizontalHeaderItem(i, item)
         item = QtWidgets.QTableWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
         self.monthDisplay.setItem(0, 0, item)
@@ -141,10 +125,20 @@ class Ui_Form(object):
         self.create_event_button.setObjectName("createEvent")
         self.create_event_button.clicked.connect(self.show_event_dialog)
 
-        self.lineEdit = QtWidgets.QLineEdit(Form)
-        self.lineEdit.setGeometry(QtCore.QRect(20, 10, 161, 31))
-        self.lineEdit.setText("")
-        self.lineEdit.setObjectName("lineEdit")
+        self.searchBox = QtWidgets.QLineEdit(Form)
+        self.searchBox.setGeometry(QtCore.QRect(20, 10, 161, 31))
+        self.searchBox.setText("")
+        self.searchBox.setObjectName("searchBox")
+        self.searchBox.textChanged.connect(self.onTextChanged)
+
+        self.searchBy = QtWidgets.QComboBox(Form)
+        self.searchBy.setEnabled(True)
+        self.searchBy.setGeometry(QtCore.QRect(15, 40, 172, 20))
+        self.searchBy.setToolTipDuration(0)
+        self.searchBy.setObjectName("searchBy")
+        self.searchBy.addItem("")
+        self.searchBy.addItem("")
+        self.searchBy.addItem("")
 
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(640, 10, 100, 33))
@@ -157,17 +151,37 @@ class Ui_Form(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
 
-        self.listWidget = QtWidgets.QListWidget(Form)
-        self.listWidget.setGeometry(QtCore.QRect(20, 40, 161, 301))
-        self.listWidget.setObjectName("listWidget")
-        self.listWidget.setVisible(False)
+        self.searchResult = QtWidgets.QListWidget(Form)
+        self.searchResult.setGeometry(QtCore.QRect(20, 40, 161, 0))
+        self.searchResult.setObjectName("searchResult")
         # Connect the currentIndexChanged signal of the ComboBox to the slot
         self.comboBox.currentIndexChanged.connect(self.onComboBoxIndexChanged)
         # Call the slot initially to set the initial state
         self.onComboBoxIndexChanged(0)  # assuming the initial index is 0
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
-
+    
+    def onTextChanged(self):
+        self.searchResult.clear()
+        num_item = 0
+        result_items = []
+        search_text = self.searchBox.text().strip()
+        if not search_text:
+            num_item = 0
+        else:
+            selected_index = self.searchBy.currentIndex()
+            if selected_index == 0:
+                result_items = search_engine.name_search(search_text, 5)
+                num_item = len(result_items)
+            elif selected_index == 1:
+                result_items = search_engine.date_search_search(search_text, 5)
+                num_item = len(result_items)
+            elif selected_index == 2:
+                pass
+            for item in result_items:
+                self.searchResult.addItem(item[1])
+        self.searchResult.setGeometry(QtCore.QRect(20, 40, 161, (num_item * 20)))
+                
     def show_event_dialog(self):
         # Create an instance of the event creation dialog
         event_dialog = QDialog()
@@ -200,16 +214,23 @@ class Ui_Form(object):
         self.comboBox.setItemText(0, _translate("Form", "Day"))
         self.comboBox.setItemText(1, _translate("Form", "Week"))
         self.comboBox.setItemText(2, _translate("Form", "Month"))
+
+        self.searchBy.setItemText(0, _translate("Form", "By Title [event name]"))
+        self.searchBy.setItemText(1, _translate("Form", "By Date [yyyy-mm-dd]"))
+        self.searchBy.setItemText(2, _translate("Form", "By Time [hh:mm]"))
+
         self.pushButton_3.setText(_translate("Form", ">"))
         self.pushButton_4.setText(_translate("Form", "<"))
+        # Month display
         for i, day in enumerate(days_in_week):
-            item = self.monthDisplay.horizontalHeaderItem(i) # Add month headers
+            item = self.monthDisplay.horizontalHeaderItem(i)
             item.setText(_translate("Form", day))
         __sortingEnabled = self.monthDisplay.isSortingEnabled()
         self.monthDisplay.setSortingEnabled(False)
         item = self.monthDisplay.item(0, 0)
         item.setText(_translate("Form", "1\n" "Sport Day"))
         self.monthDisplay.setSortingEnabled(__sortingEnabled)
+        # Week display
         count = 0
         for i in am_pm:
             for j in range(1, 13, 1):
@@ -227,7 +248,7 @@ class Ui_Form(object):
                 item.setText(_translate("Form", "{} {}".format(j, i)))
                 count += 1
         self.create_event_button.setText(_translate("Form", "Create"))
-        self.lineEdit.setPlaceholderText(_translate("Form", "Search Event"))
+        self.searchBox.setPlaceholderText(_translate("Form", "Search Event"))
         self.pushButton_2.setText(_translate("Form", "Export"))
         self.label.setText(_translate("Form", "19 October 2023"))
 
