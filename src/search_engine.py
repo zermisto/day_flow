@@ -6,31 +6,14 @@ import  sqlite3
 
 connection = sqlite3.connect("eventDB.db")
 cursor = connection.cursor()
+search_types = ["name", "start_date", "end_date", "start_time", "end_time"]
 
-def name_search(pattern, maximum_items = 10):
+def event_search(pattern, type="name", maximum_items = 5):
     with connection:
-        cursor.execute("SELECT * FROM events WHERE name LIKE ?;", ('%{}%'.format(pattern),))
+        cursor.execute("SELECT * FROM events WHERE {} LIKE ?;".format(type), ('%{}%'.format(pattern),))
         selected_events = cursor.fetchall()
         items_count = len(selected_events)
         if items_count < maximum_items:
             maximum_items = items_count
         selected_events = selected_events[0:maximum_items]
         return selected_events
-
-def date_search(pattern, maximum_items = 10):
-    with connection:
-        cursor.execute("SELECT * FROM events WHERE start_date LIKE ? OR end_date LIKE ?;", 
-                       ('%{}%'.format(pattern), '%{}%'.format(pattern)))
-        selected_events = cursor.fetchall()
-        items_count = len(selected_events)
-        if items_count < maximum_items:
-            maximum_items = items_count
-        selected_events = selected_events[0:maximum_items]
-        return selected_events
-
-# Put the name or letter in between the % signs to search for the event
-# and the number is the max number of items to return
-print(name_search("Meeting", 5))
-
-# You can put the start_date or end_date in the format YYYY-MM-DD to search for the event
-print(date_search("2023", 5))

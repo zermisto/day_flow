@@ -121,21 +121,23 @@ class Ui_Form(object):
         self.dayDisplay.setHorizontalHeaderItem(0, item)
 
         self.create_event_button = QtWidgets.QPushButton(Form)
-        self.create_event_button.setGeometry(QtCore.QRect(180, 10, 81, 33))
+        self.create_event_button.setGeometry(QtCore.QRect(255, 10, 81, 33))
         self.create_event_button.setObjectName("createEvent")
         self.create_event_button.clicked.connect(self.show_event_dialog)
 
         self.searchBox = QtWidgets.QLineEdit(Form)
-        self.searchBox.setGeometry(QtCore.QRect(20, 10, 161, 31))
+        self.searchBox.setGeometry(QtCore.QRect(20, 10, 240, 31))
         self.searchBox.setText("")
         self.searchBox.setObjectName("searchBox")
         self.searchBox.textChanged.connect(self.onTextChanged)
 
         self.searchBy = QtWidgets.QComboBox(Form)
         self.searchBy.setEnabled(True)
-        self.searchBy.setGeometry(QtCore.QRect(15, 40, 172, 20))
+        self.searchBy.setGeometry(QtCore.QRect(15, 40, 245, 20))
         self.searchBy.setToolTipDuration(0)
         self.searchBy.setObjectName("searchBy")
+        self.searchBy.addItem("")
+        self.searchBy.addItem("")
         self.searchBy.addItem("")
         self.searchBy.addItem("")
         self.searchBy.addItem("")
@@ -145,42 +147,46 @@ class Ui_Form(object):
         self.pushButton_2.setObjectName("pushButton_2")
 
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(390, 10, 241, 31))
+        self.label.setGeometry(QtCore.QRect(450, 10, 241, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label.setFont(font)
         self.label.setObjectName("label")
 
         self.searchResult = QtWidgets.QListWidget(Form)
-        self.searchResult.setGeometry(QtCore.QRect(20, 40, 161, 0))
+        self.searchResult.setGeometry(QtCore.QRect(20, 40, 245, 0))
         self.searchResult.setObjectName("searchResult")
+        self.searchResult.itemClicked.connect(self.onItemClicked)
         # Connect the currentIndexChanged signal of the ComboBox to the slot
         self.comboBox.currentIndexChanged.connect(self.onComboBoxIndexChanged)
         # Call the slot initially to set the initial state
         self.onComboBoxIndexChanged(0)  # assuming the initial index is 0
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def moveToTargetDate(self):
+        print("TODO move to selected date")
     
     def onTextChanged(self):
         self.searchResult.clear()
         num_item = 0
         result_items = []
         search_text = self.searchBox.text().strip()
+        search_types = search_engine.search_types
         if not search_text:
             num_item = 0
         else:
             selected_index = self.searchBy.currentIndex()
-            if selected_index == 0:
-                result_items = search_engine.name_search(search_text, 5)
-                num_item = len(result_items)
-            elif selected_index == 1:
-                result_items = search_engine.date_search_search(search_text, 5)
-                num_item = len(result_items)
-            elif selected_index == 2:
-                pass
+            result_items = search_engine.event_search(search_text, search_types[selected_index])
+            num_item = len(result_items)
             for item in result_items:
-                self.searchResult.addItem(item[1])
-        self.searchResult.setGeometry(QtCore.QRect(20, 40, 161, (num_item * 20)))
+                label_string = item[1] + "\n{}[{}] - {}[{}]".format(item[2], item[4], item[3], item[5])
+                self.searchResult.addItem(label_string)
+        self.searchResult.setGeometry(QtCore.QRect(30, 40, 245, (num_item * 40)))
+    
+    def onItemClicked(self, item):
+        if item is not None:
+            self.moveToTargetDate()            
                 
     def show_event_dialog(self):
         # Create an instance of the event creation dialog
@@ -216,8 +222,10 @@ class Ui_Form(object):
         self.comboBox.setItemText(2, _translate("Form", "Month"))
 
         self.searchBy.setItemText(0, _translate("Form", "By Title [event name]"))
-        self.searchBy.setItemText(1, _translate("Form", "By Date [yyyy-mm-dd]"))
-        self.searchBy.setItemText(2, _translate("Form", "By Time [hh:mm]"))
+        self.searchBy.setItemText(1, _translate("Form", "By Start Date [yyyy-mm-dd]"))
+        self.searchBy.setItemText(2, _translate("Form", "By End Date [yyyy-mm-dd]"))
+        self.searchBy.setItemText(3, _translate("Form", "By Start Time [hh:mm]"))
+        self.searchBy.setItemText(4, _translate("Form", "By End Time [hh:mm]"))
 
         self.pushButton_3.setText(_translate("Form", ">"))
         self.pushButton_4.setText(_translate("Form", "<"))
@@ -247,6 +255,7 @@ class Ui_Form(object):
                 item = self.dayDisplay.verticalHeaderItem(count)
                 item.setText(_translate("Form", "{} {}".format(j, i)))
                 count += 1
+
         self.create_event_button.setText(_translate("Form", "Create"))
         self.searchBox.setPlaceholderText(_translate("Form", "Search Event"))
         self.pushButton_2.setText(_translate("Form", "Export"))
