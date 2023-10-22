@@ -186,7 +186,7 @@ class Ui_Form(object):
         # Create an instance of the event creation dialog
         event_dialog = QDialog()
         ui = CreateEventPopup()                  
-        ui.setupUi(event_dialog)
+        ui.set_up_ui(event_dialog)
         # Show the dialog
         event_dialog.exec_()
 

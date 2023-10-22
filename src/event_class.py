@@ -2,7 +2,7 @@
 # Class for event objects
 # Created by King, 1st October 2023
 
-class event:
+class eventClass:
 
     def __init__(self, id, name, start_date, end_date, start_time, end_time, description, location, repeat_every, repeat_pattern, repeat_count):
         self.id = id    
