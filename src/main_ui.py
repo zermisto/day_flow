@@ -13,10 +13,10 @@
 
 import sys
 import search_engine
-import sqlite_demo
 from create_event import CreateEventPopup
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
+import datetime
 
 am_pm = ["AM", "PM"]
 days_in_week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
@@ -25,7 +25,8 @@ month_in_year = [
     'May', 'June', 'July', 'August', 
     'September', 'October', 'November', 'December'
 ]
-current_day = 21
+current_time = datetime.datetime.now()
+current_day = current_time.day
 
 class Ui_Form(object): 
     def setupUi(self, Form):
@@ -36,14 +37,13 @@ class Ui_Form(object):
         self.widget.setGeometry(QtCore.QRect(20, 60, 711, 551))
         self.widget.setObjectName("widget")
 
-        self.comboBox = QtWidgets.QComboBox(self.widget)
-        self.comboBox.setEnabled(True)
-        self.comboBox.setGeometry(QtCore.QRect(10, 10, 111, 26))
-        self.comboBox.setToolTipDuration(0)
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
+        self.selectViewBy = QtWidgets.QComboBox(self.widget)
+        self.selectViewBy.setEnabled(True)
+        self.selectViewBy.setGeometry(QtCore.QRect(10, 10, 111, 26))
+        self.selectViewBy.setToolTipDuration(0)
+        self.selectViewBy.setObjectName("comboBox")
+        for i in range(3):
+            self.selectViewBy.addItem("")
 
         self.dateEdit = QtWidgets.QDateEdit(self.widget) # Create a DateEdit widget
         self.dateEdit.setEnabled(True)
@@ -54,12 +54,12 @@ class Ui_Form(object):
         self.dateEdit.setProperty("showGroupSeparator", False)
         self.dateEdit.setObjectName("dateEdit")
 
-        self.pushButton_3 = QtWidgets.QPushButton(self.widget)
-        self.pushButton_3.setGeometry(QtCore.QRect(420, 0, 51, 33))
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.pushButton_4 = QtWidgets.QPushButton(self.widget)
-        self.pushButton_4.setGeometry(QtCore.QRect(240, 0, 51, 33))
-        self.pushButton_4.setObjectName("pushButton_4")
+        self.nextButton = QtWidgets.QPushButton(self.widget)
+        self.nextButton.setGeometry(QtCore.QRect(420, 0, 51, 33))
+        self.nextButton.setObjectName("pushButton_3")
+        self.previousButton = QtWidgets.QPushButton(self.widget)
+        self.previousButton.setGeometry(QtCore.QRect(240, 0, 51, 33))
+        self.previousButton.setObjectName("pushButton_4")
 
         self.monthDisplay = QtWidgets.QTableWidget(self.widget)
         self.monthDisplay.setEnabled(True)
@@ -129,7 +129,7 @@ class Ui_Form(object):
         self.searchBox.setGeometry(QtCore.QRect(20, 10, 240, 31))
         self.searchBox.setText("")
         self.searchBox.setObjectName("searchBox")
-        self.searchBox.textChanged.connect(self.onTextChanged)
+        self.searchBox.textChanged.connect(self.on_text_changed)
 
         self.searchBy = QtWidgets.QComboBox(Form)
         self.searchBy.setEnabled(True)
@@ -142,32 +142,32 @@ class Ui_Form(object):
         self.searchBy.addItem("")
         self.searchBy.addItem("")
 
-        self.pushButton_2 = QtWidgets.QPushButton(Form)
-        self.pushButton_2.setGeometry(QtCore.QRect(640, 10, 100, 33))
-        self.pushButton_2.setObjectName("pushButton_2")
+        self.exportButton = QtWidgets.QPushButton(Form)
+        self.exportButton.setGeometry(QtCore.QRect(640, 10, 100, 33))
+        self.exportButton.setObjectName("pushButton_2")
 
-        self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(450, 10, 241, 31))
+        self.currentDayLabel = QtWidgets.QLabel(Form)
+        self.currentDayLabel.setGeometry(QtCore.QRect(450, 10, 241, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
-        self.label.setFont(font)
-        self.label.setObjectName("label")
+        self.currentDayLabel.setFont(font)
+        self.currentDayLabel.setObjectName("currentDayLabel")
 
         self.searchResult = QtWidgets.QListWidget(Form)
         self.searchResult.setGeometry(QtCore.QRect(20, 40, 245, 0))
         self.searchResult.setObjectName("searchResult")
-        self.searchResult.itemClicked.connect(self.onItemClicked)
+        self.searchResult.itemClicked.connect(self.on_search_result_clicked)
         # Connect the currentIndexChanged signal of the ComboBox to the slot
-        self.comboBox.currentIndexChanged.connect(self.onComboBoxIndexChanged)
+        self.selectViewBy.currentIndexChanged.connect(self.on_display_changed)
         # Call the slot initially to set the initial state
-        self.onComboBoxIndexChanged(0)  # assuming the initial index is 0
+        self.on_display_changed(0)  # assuming the initial index is 0
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def moveToTargetDate(self):
+    def move_to_target_date(self):
         print("TODO move to selected date")
     
-    def onTextChanged(self):
+    def on_text_changed(self):
         self.searchResult.clear()
         num_item = 0
         result_items = []
@@ -184,9 +184,9 @@ class Ui_Form(object):
                 self.searchResult.addItem(label_string)
         self.searchResult.setGeometry(QtCore.QRect(30, 40, 245, (num_item * 40)))
     
-    def onItemClicked(self, item):
+    def on_search_result_clicked(self, item):
         if item is not None:
-            self.moveToTargetDate()            
+            self.move_to_target_date()            
                 
     def show_event_dialog(self):
         # Create an instance of the event creation dialog
@@ -196,9 +196,9 @@ class Ui_Form(object):
         # Show the dialog
         event_dialog.exec_()
 
-    def onComboBoxIndexChanged(self, index):
+    def on_display_changed(self, index):
         # Get the selected text from the ComboBox
-        selected_text = self.comboBox.currentText()
+        selected_text = self.selectViewBy.currentText()
 
         # Set the visibility of the TableWidgets based on the selected text
         if selected_text == "Month":
@@ -217,9 +217,9 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.comboBox.setItemText(0, _translate("Form", "Day"))
-        self.comboBox.setItemText(1, _translate("Form", "Week"))
-        self.comboBox.setItemText(2, _translate("Form", "Month"))
+        self.selectViewBy.setItemText(0, _translate("Form", "Day"))
+        self.selectViewBy.setItemText(1, _translate("Form", "Week"))
+        self.selectViewBy.setItemText(2, _translate("Form", "Month"))
 
         self.searchBy.setItemText(0, _translate("Form", "By Title [event name]"))
         self.searchBy.setItemText(1, _translate("Form", "By Start Date [yyyy-mm-dd]"))
@@ -227,8 +227,8 @@ class Ui_Form(object):
         self.searchBy.setItemText(3, _translate("Form", "By Start Time [hh:mm]"))
         self.searchBy.setItemText(4, _translate("Form", "By End Time [hh:mm]"))
 
-        self.pushButton_3.setText(_translate("Form", ">"))
-        self.pushButton_4.setText(_translate("Form", "<"))
+        self.nextButton.setText(_translate("Form", ">"))
+        self.previousButton.setText(_translate("Form", "<"))
         # Month display
         for i, day in enumerate(days_in_week):
             item = self.monthDisplay.horizontalHeaderItem(i)
@@ -258,8 +258,8 @@ class Ui_Form(object):
 
         self.create_event_button.setText(_translate("Form", "Create"))
         self.searchBox.setPlaceholderText(_translate("Form", "Search Event"))
-        self.pushButton_2.setText(_translate("Form", "Export"))
-        self.label.setText(_translate("Form", "19 October 2023"))
+        self.exportButton.setText(_translate("Form", "Export"))
+        self.currentDayLabel.setText(_translate("Form", "26 October 2023"))
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
