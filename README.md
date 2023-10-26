@@ -1,4 +1,3 @@
-Team A edited here
 # day_flow
 Personal Calendar App (created by King, Roong, Mhon, Toiek)
 
@@ -12,5 +11,3 @@ Personal Calendar App (created by King, Roong, Mhon, Toiek)
 * Export events for a specified date range in CSV format
 
 # Problem Definition
-Team B edited here
-new last line
