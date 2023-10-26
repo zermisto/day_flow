@@ -23,3 +23,8 @@ Good progress with code! But please put the actual code author(s) in the header 
 It would be better to store the spreadsheet source, so you can add/modify test cases, plus use the spreadsheet to organize your actual testing.
 Good to see that you are updating source files (including documentation).
 
+2023-10-26:  Please rename your test plan to “FunctionalTestPlan” or something similar. I see you have committed the XSLX but this should be in the Quality directory, not in the src directory! And you should remove the PDF. 
+
+EXCELLENT code review report!! And your static analysis looks useful too. Did you update your code to use the modified version?
+
+It looks like you’re making good progress on the code, too.
