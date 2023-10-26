@@ -25,6 +25,7 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.event_title_text = QtWidgets.QTextEdit(self.widget)
         self.event_title_text.setGeometry(QtCore.QRect(0, 0, 351, 31))
         self.event_title_text.setPlaceholderText("Event Title")
+        self.event_title_text.textChanged.connect(lambda: self.check_char_limit(self.event_title_text, 100))
 
         # Label Start Date 
         self.label_start_date = QtWidgets.QLabel(self.widget)
@@ -70,11 +71,13 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.description_text = QtWidgets.QTextEdit(self.widget)
         self.description_text.setGeometry(QtCore.QRect(0, 120, 351, 91))
         self.description_text.setPlaceholderText("Description")
+        self.description_text.textChanged.connect(lambda: self.check_char_limit(self.description_text, 100))
 
         # Location 
         self.location_text = QtWidgets.QTextEdit(self.widget)
         self.location_text.setGeometry(QtCore.QRect(0, 220, 351, 51))
         self.location_text.setPlaceholderText("Location")
+        self.location_text.textChanged.connect(lambda: self.check_char_limit(self.description_text, 100))
     
         # Label Repeat Pattern 
         self.label_repeat_pattern = QtWidgets.QLabel(self.widget)
@@ -123,15 +126,17 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.cancel_button_widget.setGeometry(QtCore.QRect(230, 360, 93, 28))
 
         self.retranslate_ui(Form)
-        # if user click ok, call getInputFromUser, and close form
+        # If user click ok, call getInputFromUser, and close form
         self.ok_button_widget.clicked.connect(lambda: insert_event(self.get_input_from_user()))
         self.ok_button_widget.clicked.connect(Form.close)
 
-        # if user click cancel, close form
+        # If user click cancel, close form
         self.cancel_button_widget.clicked.connect(Form.close)
 
         QtCore.QMetaObject.connectSlotsByName(Form) 
 
+# Retranslate UI
+# Sets the text and title of the widgets
     def retranslate_ui(self, Form):
         Form.setWindowTitle("Form")
         self.label_start_date.setText("Start Date")
@@ -145,6 +150,8 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.ok_button_widget.setText("OK")
         self.cancel_button_widget.setText("CANCEL")
 
+# Get Input From User
+# Gets the input from the user and returns an event object
     def get_input_from_user(self):
         id = uuid.uuid4().int & (1<<16)-1 # 16-bit random id
         event_name = self.event_title_text.toPlainText()  # get event name
@@ -165,6 +172,25 @@ class CreateEventPopup(QtWidgets.QWidget):
 
         event_data = eventClass(id, event_name, start_date, end_date, start_time, end_time, description, location, repeat_every, repeat_pattern, repeat_count)
         return event_data
+
+# Check Character Limit
+# Checks the character limit of the text in the QTextEdit
+    def check_char_limit(self, text_name, char_limit):
+        if len(text_name.toPlainText()) > char_limit:
+            text_name.setStyleSheet("color: red") # Set the text color to red
+
+            # Get the current text from the QTextEdit
+            text = text_name.toPlainText()
+            text = text[:char_limit]  # Cut off at 300 characters
+            text_name.setPlainText(text)  # Reset text
+
+            # Reset the cursor to the end position
+            cursor = text_name.textCursor()
+            cursor.setPosition(text_name.document().characterCount() - 1)
+            text_name.setTextCursor(cursor)
+            
+        elif len(text_name.toPlainText()) < char_limit:
+            text_name.setStyleSheet("color: black")  # Set the text color to black
 
 if __name__ == "__main__":
     import sys

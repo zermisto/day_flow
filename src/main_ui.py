@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import QDialog
 import datetime
 
 am_pm = ["AM", "PM"]
-days_in_week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+days_in_week = ["SUN", "MON", "TUE", "WED", "HU", "FRI", "SAT"]
 month_in_year = [
     'January', 'February', 'March', 'April', 
     'May', 'June', 'July', 'August', 
@@ -164,8 +164,14 @@ class Ui_Form(object):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
+<<<<<<< Updated upstream
     def move_to_target_date(self):
+=======
+
+    def moveToTargetDate(self, input_date):
+>>>>>>> Stashed changes
         print("TODO move to selected date")
+        #also display the data x``
     
     def on_text_changed(self):
         self.searchResult.clear()
@@ -182,7 +188,7 @@ class Ui_Form(object):
             for item in result_items:
                 label_string = item[1] + "\n{}[{}] - {}[{}]".format(item[2], item[4], item[3], item[5])
                 self.searchResult.addItem(label_string)
-        self.searchResult.setGeometry(QtCore.QRect(30, 40, 245, (num_item * 40)))
+        self.searchResult.setGeometry(QtCore.QRect(30, 40, 245, (num_item * 100)))
     
     def on_search_result_clicked(self, item):
         if item is not None:
