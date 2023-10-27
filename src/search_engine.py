@@ -17,3 +17,6 @@ def event_search(pattern, type="name", maximum_items = 5):
             maximum_items = items_count
         selected_events = selected_events[0:maximum_items]
         return selected_events
+
+def event_recurring_search(pattern, type="", maximumitems = 5):
+    pass
