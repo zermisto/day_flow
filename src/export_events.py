@@ -5,16 +5,29 @@
 
 import sqlite3
 import csv
+import export_event_class as exportEventClass
 
 connection = sqlite3.connect("eventDB.db")    #creating connection object
 
 cursor = connection.cursor()    #creating cursor object
 
 # Export events within a date range to a CSV file
-def export_events_to_csv(start_date, end_date, filename):
-    start_date = input("Enter the start date (YYYY-MM-DD): ")
-    end_date = input("Enter the end date (YYYY-MM-DD): ")
-    filename = input("Enter the CSV file name (make sure to add .csv at the end): ")
+def export_events_to_csv(export_event_data):
+    
+    # start_date = input("Enter the start date (YYYY-MM-DD): ")
+    # end_date = input("Enter the end date (YYYY-MM-DD): ")
+    # filename = input("Enter the CSV file name (make sure to add .csv at the end): ")
+    # use the event_class.py to get the start_date, end_date and filename from export_event_data
+
+    #attach csv to file name nas well so if user put 'test' it will be test.csv
+    filename = export_event_data.filename + ".csv"
+    start_date = export_event_data.start_date
+    end_date = export_event_data.end_date
+
+    print("filename: ", filename)
+    print("start_date: ", start_date)
+    print("end_date: ", end_date)
+    
 
     with connection:
         cursor.execute("SELECT * FROM events WHERE start_date BETWEEN ? AND ?", (start_date, end_date))
@@ -48,8 +61,9 @@ def export_events_to_csv(start_date, end_date, filename):
     print(f"Selected events have been exported to '{filename}'.")
 
 # Example usage of exporting events to CSV
-if __name__ == "__main__":
-    export_events_to_csv("2023-09-01", "2023-11-01", "selected_events.csv")
+#if __name__ == "__main__":
+
+    #export_events_to_csv("2023-09-01", "2023-11-01", "selected_events.csv")
     # start_date = "2023-09-01"  # Replace with your desired start date
     # end_date = "2023-11-01"    # Replace with your desired end date
     # csv_filename = "selected_events.csv"  # Specify the CSV file name

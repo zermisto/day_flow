@@ -12,6 +12,7 @@
 # Created by Roong, 20th October 2023
 
 import sys
+from export_button_popup import ExportEventPopup
 import search_engine
 from create_event import CreateEventPopup
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -166,6 +167,7 @@ class Ui_Form(object):
         self.exportButton = QtWidgets.QPushButton(Form)
         self.exportButton.setGeometry(QtCore.QRect(640, 10, 100, 33))
         self.exportButton.setObjectName("exportButton")
+        self.exportButton.clicked.connect(self.show_export_event)
 
         # Current day label
         self.currentDayLabel = QtWidgets.QLabel(Form)
@@ -260,6 +262,14 @@ class Ui_Form(object):
         ui.set_up_ui(event_dialog)
         # Show the dialog
         event_dialog.exec_()
+    
+    def show_export_event(self):
+        # Create an instance of the event creation dialog
+        event_export = QDialog()
+        ui = ExportEventPopup()                  
+        ui.set_up_ui(event_export)
+        # Show the dialog
+        event_export.exec_()
 
     def on_display_changed(self, index):
         # Get the selected text from the ComboBox
