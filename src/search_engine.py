@@ -18,5 +18,13 @@ def event_search(pattern, type="name", maximum_items = 5):
         selected_events = selected_events[0:maximum_items]
         return selected_events
 
+def event_range_search(start_date, end_date):
+    with connection:
+        cursor.execute("""SELECT * FROM events
+                          WHERE DATE(end_date) < ? AND (DATE(start_date) > ? OR repeat_count > 0);""",
+                       (end_date, start_date))
+        selected_events = cursor.fetchall()
+        return selected_events
+    
 def event_recurring_search(pattern, type="", maximumitems = 5):
     pass
