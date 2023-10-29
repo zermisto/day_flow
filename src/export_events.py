@@ -30,16 +30,17 @@ def export_events_to_csv(export_event_data):
     
 
     with connection:
-        cursor.execute("SELECT * FROM events WHERE start_date BETWEEN ? AND ?", (start_date, end_date))
+        cursor.execute("SELECT * FROM events WHERE start_date BETWEEN ? AND ?", 
+                       (start_date, end_date))
         selected_events = cursor.fetchall()
 
-    if not selected_events: # if selected_events is empty
+    if not selected_events:    # if selected_events is empty
         print("No events found within the specified date range.")
         return
 
     with open(filename, mode='w', newline='') as csv_file: 
-        fieldnames = ['ID', 'Name', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Description', 'Location',
-                      'Repeat Every', 'Repeat Pattern', 'Repeat Count']
+        fieldnames = ['ID', 'Name', 'Start Date', 'End Date', 'Start Time', 'End Time', 
+                      'Description', 'Location', 'Repeat Every', 'Repeat Pattern', 'Repeat Count']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         
         writer.writeheader()

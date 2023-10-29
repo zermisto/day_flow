@@ -45,7 +45,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(757, 654)
-        self.widget = QtWidgets.QWidget(Form) # Create a widget for the ComboBox and TableWidgets
+        self.widget = QtWidgets.QWidget(Form)    # Create a widget for the ComboBox and TableWidgets
         self.widget.setEnabled(True)
         self.widget.setGeometry(QtCore.QRect(20, 60, 711, 591))
         self.widget.setObjectName("widget")
@@ -60,7 +60,7 @@ class Ui_Form(object):
             self.selectViewBy.addItem("")
         
         # Current date button
-        self.dateEdit = QtWidgets.QDateEdit(self.widget) # Create a DateEdit widget
+        self.dateEdit = QtWidgets.QDateEdit(self.widget)    # Create a DateEdit widget
         self.dateEdit.setEnabled(True)
         self.dateEdit.setGeometry(QtCore.QRect(290, 0, 131, 31))
         self.dateEdit.setMouseTracking(False)
