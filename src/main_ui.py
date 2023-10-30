@@ -137,6 +137,21 @@ class Ui_Form(object):
         for i, _ in enumerate(days_in_week):
             item = QtWidgets.QTableWidgetItem()
             self.weekDisplay.setHorizontalHeaderItem(i, item)
+
+        # Set item flags to make items non-editable
+        def set_non_editable_items(table_widget):
+            for i in range(table_widget.rowCount()):
+                item = QtWidgets.QTableWidgetItem()
+                item.setFlags(item.flags() & ~QtCore.Qt.ItemIsEditable)
+                table_widget.setItem(i, 0, item)
+
+        # Set item flags to make items non-editable
+        set_non_editable_items(self.weekDisplay)
+
+        # Set selection mode to NoSelection for both headers
+        self.weekDisplay.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.weekDisplay.horizontalHeader().setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.weekDisplay.verticalHeader().setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         
         # Day frame
         self.dayDisplay = QtWidgets.QTableWidget(self.widget)
@@ -150,8 +165,26 @@ class Ui_Form(object):
                 item = QtWidgets.QTableWidgetItem()
                 self.dayDisplay.setVerticalHeaderItem(count, item)
                 count += 1
-        item = QtWidgets.QTableWidgetItem()
-        self.dayDisplay.setHorizontalHeaderItem(0, item)
+
+        # Set item flags to make items non-editable
+        set_non_editable_items(self.dayDisplay)
+
+        # Set selection mode to NoSelection for both headers
+        self.dayDisplay.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.dayDisplay.horizontalHeader().setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.dayDisplay.verticalHeader().setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+
+        # Next time frame button
+        self.nextButton = QtWidgets.QPushButton(self.widget)
+        self.nextButton.setGeometry(QtCore.QRect(420, 0, 51, 33))
+        self.nextButton.setObjectName("nextButton")
+        self.nextButton.clicked.connect(self.show_next_day)
+
+        # Previous time frame button
+        self.previousButton = QtWidgets.QPushButton(self.widget)
+        self.previousButton.setGeometry(QtCore.QRect(240, 0, 51, 33))
+        self.previousButton.setObjectName("previousButton")
+        self.previousButton.clicked.connect(self.show_previous_day)
 
         # Create button
         self.create_event_button = QtWidgets.QPushButton(Form)
@@ -284,7 +317,81 @@ class Ui_Form(object):
         # Get all events and place in the frame
         for key in day_dict:
             month_buttons_container[key].setText(day_dict[key])
-    
+
+        # Update day display
+        target_date_str = input_date
+        events_in_day = search_engine.event_range_search(target_date_str, target_date_str)
+
+        # Set column header text
+        today_column_text = "{} {}".format(days_in_week[today_index], today.day)
+        header_item = QtWidgets.QTableWidgetItem(today_column_text)
+        self.dayDisplay.setHorizontalHeaderItem(0, header_item)
+
+        # Clear all cells in the day display
+        for row in range(self.dayDisplay.rowCount()):
+            item = self.dayDisplay.item(row, 0)
+            item.setText("")
+            item.setForeground(QtGui.QColor('black'))
+
+        for event in events_in_day:
+            start_time_str = event[4] 
+            end_time_str = event[5]    
+            event_name = event[1]
+
+            print(f"Event: {event_name}, Start: {start_time_str}, End: {end_time_str}")
+            try:
+                # Extract hours from the datetime strings
+                start_hour = int(start_time_str.split()[1].split(':')[0])
+                end_hour = int(end_time_str.split()[1].split(':')[0])
+
+                # Calculate indices for the day display
+                start_index = start_hour
+                end_index = end_hour
+
+                # Update cells in the day display based on day_dict keys
+                for index in range(start_index, end_index + 1):
+                    day_dict_key = index
+                    item = self.dayDisplay.item(day_dict_key, 0)
+                    item.setText(event_name)
+                    item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+            except (IndexError, ValueError) as e:
+                print(f"Error processing event: {event_name}. Reason: {e}")
+                
+    def show_next_day(self):
+        global today
+        new_date = today + datetime.timedelta(days=1)
+        today = new_date
+        self.refresh_date_textbox(today.day, today.month, today.year)
+        self.refresh_month_display(today.weekday(), today.month)
+        self.move_to_targetdate(str(today))
+        self.update_day_header(today)
+        self.update_week_header(today)
+
+    def show_previous_day(self):
+        new_date = today - datetime.timedelta(days=1)
+        self.update_ui_for_date(new_date)
+
+    def update_ui_for_date(self, new_date):
+        global today
+        today = new_date
+        self.refresh_date_textbox(today.day, today.month, today.year)
+        self.refresh_month_display(today.weekday(), today.month)
+        self.move_to_targetdate(str(today))
+        self.update_day_header(today)
+        self.update_week_header(today)
+        
+
+    def update_day_header(self, target_date):
+        day_text = "{} {}".format(days_in_week[target_date.weekday()], target_date.day)
+        header_item = QtWidgets.QTableWidgetItem(day_text)
+        self.dayDisplay.setHorizontalHeaderItem(0, header_item)
+
+    def update_week_header(self, target_date):
+        for i, day in enumerate(days_in_week):
+            day_text = "{} {}".format(day, target_date.day + i)
+            header_item = QtWidgets.QTableWidgetItem(day_text)
+            self.weekDisplay.setHorizontalHeaderItem(i, header_item)
+        
     def on_text_changed(self):
         self.searchResult.clear()
         num_item = 0
