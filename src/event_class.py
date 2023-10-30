@@ -1,6 +1,8 @@
 # event_class.py
 # Class for event objects
-class Event:
+# Created by King, 1st October 2023
+
+class eventClass:
 
     def __init__(self, id, name, start_date, end_date, start_time, end_time, description, location, repeat_every, repeat_pattern, repeat_count):
         self.id = id    
@@ -11,15 +13,10 @@ class Event:
         self.end_time = end_time
         self.description = description
         self.location = location
-        self.repeat_every = repeat_every    # ('Once', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
-        self.repeat_pattern = repeat_pattern   # ('Once', 'D', 'W', 'M', 'Y')
-        self.repeat_count = repeat_count   # (negative for infinite, 
-                                            # positive for finite, 
-                                            # 0 for no repeat)
-    
-     
-
-
-
+        self.repeat_every = repeat_every        # ('Once', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
+        self.repeat_pattern = repeat_pattern    # ('Once', 'D', 'W', 'M', 'Y')
+        self.repeat_count = repeat_count        # (negative for infinite, 
+                                                # positive for finite, 
+                                                # 0 for no repeat)
 
     

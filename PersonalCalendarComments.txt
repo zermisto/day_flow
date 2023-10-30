@@ -1,0 +1,30 @@
+﻿Personal Calendar Manager
+
+
+2023-09-14: Only two use case narratives so far. 
+2023-09-21: Functional flow is quite simple… but might be adequate. 
+2023-09-28: “Backend” architecture is reasonable but “front end” really doesn’t make sense. 
+2023-10-04: Good that you have a class diagram, but I’m SURE there must be more than one class in your domain!
+
+No coding standards! (That was last week’s assignment)
+
+Good that your python files have header comments, but PLEASE include the author name.
+
+Derived files like the python cache files should not be in the repository. 
+
+2023-10-12:  Thank you for extracting your coding standards into a separate file. But you don’t have any rules about comments.
+
+Good Lab 6 reports! (You really only needed to create one, but that’s fine.)
+
+Good progress with code! But please put the actual code author(s) in the header comments. AND you removed py cache!
+
+2023-10-19: Your test plan does a reasonable job of testing individual data items. But you do not have test cases for entire functions, e.g. creating a new event, etc. Functional tests are about more than validation. (Actually what you’ve created is more like unit test cases.) So your plan not really complete. 
+
+It would be better to store the spreadsheet source, so you can add/modify test cases, plus use the spreadsheet to organize your actual testing.
+Good to see that you are updating source files (including documentation).
+
+2023-10-26:  Please rename your test plan to “FunctionalTestPlan” or something similar. I see you have committed the XSLX but this should be in the Quality directory, not in the src directory! And you should remove the PDF. 
+
+EXCELLENT code review report!! And your static analysis looks useful too. Did you update your code to use the modified version?
+
+It looks like you’re making good progress on the code, too.

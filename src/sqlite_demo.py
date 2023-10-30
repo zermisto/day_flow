@@ -1,19 +1,19 @@
 # sqlite_demo.py
 # Create a database file called eventDB.db 
-# creates a table called events
+# Creates a table called events
+# Created by King, 1st October 2023
 
 import sqlite3
-from event_class import Event
+from event_class import eventClass
 
 # creating database file called eventDB.db 
 # (change to eventDB.db to :memory: to create a database in RAM for testing)
 connection = sqlite3.connect("eventDB.db")    #creating connection object
-
 cursor = connection.cursor()    #creating cursor object
 
 with connection:    #creating table called events
     cursor.execute(
-        """CREATE TABLE events (
+        """CREATE TABLE IF NOT EXISTS events (
             id integer, 
             name text, 
             start_date text,
@@ -22,11 +22,20 @@ with connection:    #creating table called events
             end_time text,
             description text,
             location text,
-            repeat_every text,
+            repeat_every text, 
             repeat_pattern text,
             repeat_count integer
-            )""")
+        )""")
+    # cursor.execute(
+    #     """DROP TABLE events
+    #     """
+    # )
     
+    
+# repeat_every can be "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+# repeat_pattern can be "D", "W", "M", "Y" (daily, weekly, monthly, yearly)
+# repeat_count is the number of times the event repeats (0 for infinite)
+
 # insert event into table
 def insert_event(event):
     with connection:
@@ -42,7 +51,8 @@ def edit_event(event):
     with connection:
         cursor.execute("""UPDATE events SET name=:name, start_date=:start_date, end_date=:end_date, start_time=:start_time,
                         end_time=:end_time, description=:description, location=:location, repeat_every=:repeat_every,
-                        repeat_pattern=:repeat_pattern, repeat_count=:repeat_count WHERE id=:id""", {'id': event.id,
+                        repeat_pattern=:repeat_pattern, repeat_count=:repeat_count WHERE id=:id""", 
+                        {'id': event.id,
                         'name': event.name, 'start_date': event.start_date, 'end_date': event.end_date,
                         'start_time': event.start_time, 'end_time': event.end_time, 'description': event.description,
                         'location': event.location, 'repeat_every': event.repeat_every, 'repeat_pattern': event.repeat_pattern,
@@ -53,49 +63,27 @@ def remove_event(id):
     with connection:
         cursor.execute("DELETE from events WHERE id=:id", {'id': id})
 
-# search for event by name 
-def get_event_by_name(name):
-    cursor.execute("SELECT * FROM events WHERE name=:name", {'name': name})
-    return cursor.fetchall()
-
-# search for event by start date
-def get_event_by_start_date(start_date):
-    cursor.execute("SELECT * FROM events WHERE start_date=:start_date", {'start_date': start_date})
-    return cursor.fetchall()
-
-
-
-
 
 ## TEST CODE ##
+def test_code():
+    # update event in table
+    event1 = eventClass(1, 'Sports Day', '2023-09-27', '2023-09-27', '09:00', '17:00', 'Sports Day', 'Sports Hall', 'Once', 'Once', 0)
+    event2 = eventClass(2, 'Meeting', '2023-10-05', '2023-10-05', '09:00', '17:00', 'Meeting', 'Meeting Room', 'Wed', 'W', 10)
+    event3 = eventClass(3, 'Open House', '2023-09-09', '2023-10-09', '09:00', '17:00', 'Open House', 'Hall', 'Once', 'Once', 0)
 
+    insert_event(event1)
+    insert_event(event2)
+    insert_event(event3)
 
-# update event in table
-event1 = Event(1, 'Sports Day', '2023-09-27', '2023-09-27', '09:00', '17:00', 'Sports Day', 'Sports Hall', 'Once', 'Once', 0)
-event2 = Event(2, 'Meeting', '2023-10-05', '2023-10-05', '09:00', '17:00', 'Meeting', 'Meeting Room', 'Wed', 'W', 10)
-event3 = Event(3, 'Open House', '2023-09-09', '2023-10-09', '09:00', '17:00', 'Open House', 'Hall', 'Once', 'Once', 0)
+    # update event with id 1
+    event1.name = "Sports Day 2023"
+    edit_event(event1)
 
-insert_event(event1)
-insert_event(event2)
-insert_event(event3)
-
-# search for events with name containing "Sports Day"
-events = get_event_by_name("Sports Day")
-print(events)
-
-# search for events with date containing "2023-10-05"
-events = get_event_by_start_date("2023-10-05")
-print(events)
-
-# update event with id 1
-event1.name = "Sports Day 2023"
-edit_event(event1)
-
-print("\n*********************************\n")
-# search for all events
-cursor.execute("SELECT * FROM events")
-for row in cursor.fetchall():
-    print(row)
+# print("\n*********************************\n")
+# # # search for all events
+# cursor.execute("SELECT * FROM events")
+# for row in cursor.fetchall():
+#     print(row)
 
 
 
