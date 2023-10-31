@@ -130,7 +130,7 @@ class Ui_Form(object):
         self.weekDisplay.setRowCount(24)
         count = 0
         for i in am_pm:
-            for j in range(1, 13, 1):
+            for j in range(1, 13, 1): 
                 item = QtWidgets.QTableWidgetItem()
                 self.weekDisplay.setVerticalHeaderItem(count, item)
                 count += 1
@@ -276,6 +276,9 @@ class Ui_Form(object):
         print("TODO Update day display")
         # Update week display
         print("TODO Update week display")
+
+
+
         # Update month display
         count = 0
         target_y_m_d = input_date.split("-")
@@ -284,6 +287,13 @@ class Ui_Form(object):
         end_date = target_y_m_d[0] + "-" + target_y_m_d[1] + "-" + str(days_in_month[month_index])
         events_in_month = search_engine.event_range_search(start_date, end_date)
         first_day_index = today.replace(day=1, month=month_index).weekday()
+
+        # print("target_y_m_d: {}".format(target_y_m_d))
+        # print("month_index: {}".format(month_index))
+        # print("start_date: {}".format(start_date))
+        # print("end_date: {}".format(end_date))
+        # print("events_in_month: {}".format(events_in_month))
+        # print("first_day_index: {}".format(first_day_index))
         
         # Put all events in the dictionary
         day_dict = {}
@@ -411,7 +421,7 @@ class Ui_Form(object):
     
     def on_search_result_clicked(self, item):
         if item is not None:
-            self.move_to_targetdate()            
+            self.move_to_targetdate()          
                 
     def show_event_dialog(self):
         # Create an instance of the event creation dialog

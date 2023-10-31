@@ -5,7 +5,7 @@
 
 import sqlite3
 import csv
-import export_event_class as exportEventClass
+from user_input_validation import check_event_timeframe
 
 connection = sqlite3.connect("eventDB.db")    #creating connection object
 
@@ -14,29 +14,18 @@ cursor = connection.cursor()    #creating cursor object
 # Export events within a date range to a CSV file
 def export_events_to_csv(export_event_data):
     
-    # start_date = input("Enter the start date (YYYY-MM-DD): ")
-    # end_date = input("Enter the end date (YYYY-MM-DD): ")
-    # filename = input("Enter the CSV file name (make sure to add .csv at the end): ")
-    # use the event_class.py to get the start_date, end_date and filename from export_event_data
-
-    #attach csv to file name nas well so if user put 'test' it will be test.csv
     filename = export_event_data.filename + ".csv"
     start_date = export_event_data.start_date
     end_date = export_event_data.end_date
-
-    print("filename: ", filename)
-    print("start_date: ", start_date)
-    print("end_date: ", end_date)
-    
 
     with connection:
         cursor.execute("SELECT * FROM events WHERE start_date BETWEEN ? AND ?", 
                        (start_date, end_date))
         selected_events = cursor.fetchall()
 
-    if not selected_events: # if selected_events is empty
-        print("No events found within the specified date range.")
+    if (check_event_timeframe(selected_events) == False):
         return
+    
     with open(filename, mode='w', newline='') as csv_file: 
         fieldnames = ['ID', 'Name', 'Start Date', 'End Date', 'Start Time', 'End Time', 
                       'Description', 'Location', 'Repeat Every', 'Repeat Pattern', 'Repeat Count']
