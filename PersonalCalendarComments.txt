@@ -28,3 +28,8 @@ Good to see that you are updating source files (including documentation).
 EXCELLENT code review report!! And your static analysis looks useful too. Did you update your code to use the modified version?
 
 It looks like you’re making good progress on the code, too.
+
+2023-11-02: Deployment report is a bit confusing since you put all your content in italics, did not always remove my instructions. Good details, BUT I don’t think using GitHub for deployment is a good solution. It is NOT acceptable that you require the user to individually install different dependent components. You cannot use “sudo apt get” because this is specific to Ubuntu and will not work on my Linux system.
+
+Do you really intend to provide all those different documents? 
+
