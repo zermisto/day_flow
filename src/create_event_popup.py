@@ -81,7 +81,7 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.location_text.setGeometry(QtCore.QRect(0, 220, 351, 51))
         self.location_text.setPlaceholderText("Location")
         self.location_text.textChanged.connect(
-            lambda: check_char_limit(self.description_text, 100))
+            lambda: check_char_limit(self.location_text, 100))
 
         # Label Repeat Pattern
         self.label_repeat_pattern = QtWidgets.QLabel(self.widget)
