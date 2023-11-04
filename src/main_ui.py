@@ -19,6 +19,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
 import datetime
 import calendar
+import math
 
 am_pm = ["AM", "PM"]
 days_in_week = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
@@ -257,7 +258,7 @@ class Ui_Form(object):
                     elif count % 7 == 6 or count % 7 == 5:
                         item.setForeground(QtGui.QColor('indianred'))
                     else:
-                        item.setForeground(QtGui.QColor('white'))
+                        item.setForeground(QtGui.QColor('black'))
                     temp_day = temp_current_month_day
                     temp_current_month_day += 1
                 item.setText(_translate("Form", "{}".format(temp_day)))
@@ -284,7 +285,136 @@ class Ui_Form(object):
         events_in_month = {}
         events_in_month = search_engine.event_range_search(start_date, end_date)
         first_day_index = input_date.replace(day=1, month=month_index).weekday()
-        print(events_in_month)
+
+        # Update day display
+        start_date = str(2000) + "-" + str(month) +  "-" + "1"
+        end_date = str(3000) + "-" + str(month) + "-" + str(month - 1)
+        events_in_day = {}
+        events_in_day = search_engine.event_range_search(start_date, end_date)
+        print(events_in_day, "events in day")
+
+        # Set column header text
+        today_column_text = "{} {}".format(days_in_week[today_index], today.day)
+        header_item = QtWidgets.QTableWidgetItem(today_column_text)
+        self.dayDisplay.setHorizontalHeaderItem(0, header_item)
+
+        # Clear all cells in the day display
+        for row in range(self.dayDisplay.rowCount()):
+            item = self.dayDisplay.item(row, 0)
+            item.setText("")
+            item.setForeground(QtGui.QColor('black'))
+
+        for event in events_in_day:
+            event_name = event[1]
+            start_date_str = event[2]
+            end_date_str = event[3]
+            start_time_str = event[4]
+            end_time_str = event[5]
+
+            # print(event_name, start_date_str, end_date_str, start_time_str, end_time_str)
+            startD = start_date_str.split(" ")[0]
+            year, month, day = startD.split("-")
+            print(year, month, day)
+            
+            # Check if the event is on the target day
+            if start_date_str == end_date_str:
+                if start_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
+                    # Extract hours from the datetime strings
+                    start_hour = math.ceil(float(start_time_str.split(':')[0]))
+                    end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+                    # Ensure the indices are within the valid range (0 to 23)
+                    start_index = start_hour % 24
+                    end_index = end_hour % 24
+
+                    # Update cells in the day display based on day_dict keys
+                    for index in range(start_index, end_index):
+                        indicies = index
+                        print(indicies)
+                        item = self.dayDisplay.item(indicies, 0)
+                        item.setText(event_name)
+                        item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+            else:
+                if start_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
+                    # Extract hours from the datetime strings
+                    start_hour = math.ceil(float(start_time_str.split(':')[0]))
+                    end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+                    # Ensure the indices are within the valid range (0 to 23)
+                    start_index = start_hour % 24
+                    end_index = end_hour % 24
+
+                    # Update cells in the day display based on day_dict keys
+                    for index in range(start_index, end_index):
+                        indicies = index
+                        print(indicies)
+                        item = self.dayDisplay.item(indicies, 0)
+                        item.setText(event_name)
+                        item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+
+                if end_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
+                    # Extract hours from the datetime strings
+                    start_hour = math.ceil(float(start_time_str.split(':')[0]))
+                    end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+                    # Ensure the indices are within the valid range (0 to 23)
+                    start_index = start_hour % 24
+                    end_index = end_hour % 24
+
+                    # Update cells in the day display based on day_dict keys
+                    for index in range(start_index, end_index):
+                        indicies = index
+                        print(indicies)
+                        item = self.dayDisplay.item(indicies, 0)
+                        item.setText(event_name)
+                        item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+
+
+            for event in events_in_day:
+                event_name = event[1]
+                start_date_str = event[2]
+                end_date_str = event[3]
+                start_time_str = event[4]
+                end_time_str = event[5]
+
+                # print(event_name, start_date_str, end_date_str, start_time_str, end_time_str)
+                startD = start_date_str.split(" ")[0]
+                year, month, day = startD.split("-")
+                print(year, month, day)
+
+                # Iterate over the days of the week
+                for i, weekday in enumerate(days_in_week):
+                    # Calculate the date for the current day in the week
+                    current_date = today + datetime.timedelta(days=i)
+
+                    # Check if the event falls on the current day
+                    if (
+                        current_date.year == int(year)
+                        and current_date.month == int(month)
+                        and current_date.day == int(day)
+                    ):
+                        # Extract hours from the datetime strings
+                        start_hour = math.ceil(float(start_time_str.split(':')[0]))
+                        end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+                        # Ensure the indices are within the valid range (0 to 23)
+                        start_index = start_hour % 24
+                        end_index = end_hour % 24
+
+                        # Initialize items in the week display if not already initialized
+                        for row in range(self.weekDisplay.rowCount()):
+                            if self.weekDisplay.item(row, i) is None:
+                                item = QtWidgets.QTableWidgetItem()
+                                self.weekDisplay.setItem(row, i, item)
+
+                        # Update cells in the week display based on the day_dict keys
+                        for index in range(start_index, end_index):
+                            indicies = index
+                            print(indicies)
+                            item = self.weekDisplay.item(indicies, i)
+                            item.setText(event_name)
+                            item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+
 
         # Put all events in the dictionary
         day_dict = {}
@@ -318,46 +448,6 @@ class Ui_Form(object):
         # Display in the all events and place in the frame
         for key in day_dict:
             month_buttons_container[key].setText(day_dict[key])
-
-        # Update day display
-        target_date_str = input_date
-        events_in_day = search_engine.event_range_search(target_date_str, target_date_str)
-
-        # Set column header text
-        today_column_text = "{} {}".format(days_in_week[today_index], today.day)
-        header_item = QtWidgets.QTableWidgetItem(today_column_text)
-        self.dayDisplay.setHorizontalHeaderItem(0, header_item)
-
-        # Clear all cells in the day display
-        for row in range(self.dayDisplay.rowCount()):
-            item = self.dayDisplay.item(row, 0)
-            item.setText("")
-            item.setForeground(QtGui.QColor('black'))
-
-        for event in events_in_day:
-            start_time_str = event[4] 
-            end_time_str = event[5]    
-            event_name = event[1]
-
-            # print(f"Event: {event_name}, Start: {start_time_str}, End: {end_time_str}")
-            try:
-                # Extract hours from the datetime strings
-                start_hour = int(start_time_str.split()[1].split(':')[0])
-                end_hour = int(end_time_str.split()[1].split(':')[0])
-
-                # Calculate indices for the day display
-                start_index = start_hour
-                end_index = end_hour
-
-                # Update cells in the day display based on day_dict keys
-                for index in range(start_index, end_index + 1):
-                    day_dict_key = index
-                    item = self.dayDisplay.item(day_dict_key, 0)
-                    item.setText(event_name)
-                    item.setForeground(QtGui.QColor('green'))  # Set the text color to green
-            except (IndexError, ValueError) as e:
-                pass
-                # print(f"Error processing event: {event_name}. Reason: {e}")
     
     def enter_date(self):
         global today
