@@ -18,6 +18,7 @@ from create_event import CreateEventPopup
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
 import datetime
+import calendar
 
 am_pm = ["AM", "PM"]
 days_in_week = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
@@ -26,26 +27,17 @@ months = [
     'May', 'June', 'July', 'August', 
     'September', 'October', 'November', 'December'
 ]
-days_in_month = [
-    31, 28, 31, 30,
-    31, 30, 31, 31,
-    30, 31, 30, 31
-]
+select_view_list = [1, 7, 30]
 today = datetime.date.today()
 today_index = today.weekday()
 current_time = datetime.datetime.now()
 month_index = today.month
 first_day_index = today.replace(day=1).weekday()
-
 num_month_row = 6
 num_month_column = 7
 month_buttons_container : list = []
 items_in_month = []
 items_in_week = []
-
-# Leap year
-if today.year % 4 != 0:
-    days_in_month[1] = 29
 
 class Ui_Form(object): 
     def setupUi(self, Form):
@@ -74,16 +66,6 @@ class Ui_Form(object):
         self.dateEdit.setAcceptDrops(False)
         self.dateEdit.setProperty("showGroupSeparator", False)
         self.dateEdit.setObjectName("dateEdit")
-
-        # Next time frame button
-        self.nextButton = QtWidgets.QPushButton(self.widget)
-        self.nextButton.setGeometry(QtCore.QRect(420, 0, 51, 33))
-        self.nextButton.setObjectName("nextButton")
-
-        # Previous time frame button
-        self.previousButton = QtWidgets.QPushButton(self.widget)
-        self.previousButton.setGeometry(QtCore.QRect(240, 0, 51, 33))
-        self.previousButton.setObjectName("previousButton")
 
         # Month frame
         self.monthDisplay = QtWidgets.QTableWidget(self.widget)
@@ -174,17 +156,23 @@ class Ui_Form(object):
         self.dayDisplay.horizontalHeader().setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.dayDisplay.verticalHeader().setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
 
+        # Date search button
+        self.dateSearchButton = QtWidgets.QPushButton(self.widget)
+        self.dateSearchButton.setGeometry(QtCore.QRect(418, 0, 40, 33))
+        self.dateSearchButton.setObjectName("dateSearchButton")
+        self.dateSearchButton.clicked.connect(self.enter_date)
+
         # Next time frame button
         self.nextButton = QtWidgets.QPushButton(self.widget)
-        self.nextButton.setGeometry(QtCore.QRect(420, 0, 51, 33))
+        self.nextButton.setGeometry(QtCore.QRect(450, 0, 51, 33))
         self.nextButton.setObjectName("nextButton")
-        self.nextButton.clicked.connect(self.show_next_day)
+        self.nextButton.clicked.connect(self.move_next_frame)
 
         # Previous time frame button
         self.previousButton = QtWidgets.QPushButton(self.widget)
         self.previousButton.setGeometry(QtCore.QRect(240, 0, 51, 33))
         self.previousButton.setObjectName("previousButton")
-        self.previousButton.clicked.connect(self.show_previous_day)
+        self.previousButton.clicked.connect(self.move_prev_frame)
 
         # Create button
         self.create_event_button = QtWidgets.QPushButton(Form)
@@ -232,37 +220,46 @@ class Ui_Form(object):
         self.on_display_changed(0) # Call the slot initially to set the initial state
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
-    
-    def refresh_month_display(self, target_day_index, month_index):
+
+    def refresh_month_display(self, target_day : datetime.date):
         _translate = QtCore.QCoreApplication.translate
+        self.monthDisplay.setSortingEnabled(False)
+        # set header columns
         for i, day in enumerate(days_in_week):
             item = self.monthDisplay.horizontalHeaderItem(i)
             item.setText(_translate("Form", day))
         __sortingEnabled = self.monthDisplay.isSortingEnabled()
-        self.monthDisplay.setSortingEnabled(False)
-        count = 0
+
+        first_day_index = target_day.replace(year=target_day.year ,day=1).weekday()
+        temp_day = 0
         temp_current_month_day = 1
         temp_next_month_day = 1
-        temp_prev_month_day = days_in_month[(month_index - 2) % 12]
-        temp_prev_month_day -= target_day_index - 1
+        target_day_index = target_day.day
+        target_month_index = (target_day.month - 2) % 12
+        last_day_prev_month = calendar.monthrange(target_day.year, target_month_index + 1)[1]
+        last_day = calendar.monthrange(target_day.year, target_day.month)[1]
+        temp_last_day_prev_month = last_day_prev_month - first_day_index + 1
+        count = 0
         for i in range(num_month_row):
             for j in range(num_month_column):
                 item = self.monthDisplay.item(i, j)
                 if count < first_day_index:
                     item.setForeground(QtGui.QColor('grey'))
-                    temp_day = temp_prev_month_day
-                    temp_prev_month_day += 1
-                elif count > first_day_index + days_in_month[month_index]:
+                    temp_day = temp_last_day_prev_month
+                    temp_last_day_prev_month += 1
+                elif count >= first_day_index + last_day:
                     item.setForeground(QtGui.QColor('grey'))
                     temp_day = temp_next_month_day
                     temp_next_month_day += 1
                 else:
+                    if target_day_index == temp_current_month_day:
+                        item.setForeground(QtGui.QColor('cyan'))
+                    elif count % 7 == 6 or count % 7 == 5:
+                        item.setForeground(QtGui.QColor('indianred'))
+                    else:
+                        item.setForeground(QtGui.QColor('white'))
                     temp_day = temp_current_month_day
                     temp_current_month_day += 1
-                    if count % 7 == 6 or count % 7 == 5:
-                        item.setForeground(QtGui.QColor('indianred'))
-                if today.day == temp_current_month_day - 1:
-                    item.setForeground(QtGui.QColor('cyan'))
                 item.setText(_translate("Form", "{}".format(temp_day)))
                 month_buttons_container[count].setText("")
                 count += 1
@@ -271,30 +268,24 @@ class Ui_Form(object):
     def refresh_date_textbox(self, target_day, target_month, target_year):
         self.dateEdit.setDate(QtCore.QDate(target_year, target_month, target_day))
 
-    def move_to_targetdate(self, input_date : str):
+    def move_to_targetdate(self, input_date : datetime.date):
+        # Update dateEdit box
+        self.refresh_date_textbox(today.day, today.month, today.year)
         # Update day display
-        print("TODO Update day display")
+        self.update_day_header(today)
         # Update week display
-        print("TODO Update week display")
-
-
-
+        self.update_week_header(today)
         # Update month display
-        count = 0
-        target_y_m_d = input_date.split("-")
-        month_index = int(target_y_m_d[1])
-        start_date = target_y_m_d[0] + "-" + target_y_m_d[1] +  "-" + "1"
-        end_date = target_y_m_d[0] + "-" + target_y_m_d[1] + "-" + str(days_in_month[month_index])
+        self.refresh_month_display(today)
+        month = input_date.month
+        year = input_date.year
+        start_date = str(year) + "-" + str(month) +  "-" + "1"
+        end_date = str(year) + "-" + str(month) + "-" + str(month - 1)
+        events_in_month = {}
         events_in_month = search_engine.event_range_search(start_date, end_date)
-        first_day_index = today.replace(day=1, month=month_index).weekday()
+        first_day_index = input_date.replace(day=1, month=month_index).weekday()
+        print(events_in_month)
 
-        # print("target_y_m_d: {}".format(target_y_m_d))
-        # print("month_index: {}".format(month_index))
-        # print("start_date: {}".format(start_date))
-        # print("end_date: {}".format(end_date))
-        # print("events_in_month: {}".format(events_in_month))
-        # print("first_day_index: {}".format(first_day_index))
-        
         # Put all events in the dictionary
         day_dict = {}
         def add_event_to_dict(temp_key, temp_value):
@@ -306,7 +297,7 @@ class Ui_Form(object):
                     day_dict[temp_key] = str(day_dict[temp_key]) + str(temp_value)
                 else:
                     day_dict[temp_key] = str(day_dict[temp_key]) + "..."
-
+       
         for event in events_in_month:
             temp_y_m_d = event[2].split("-")
             temp_key = int(temp_y_m_d[2]) - 1 + first_day_index
@@ -314,9 +305,9 @@ class Ui_Form(object):
             add_event_to_dict(temp_key, temp_value)
             recurring_count = event[10]
             recurring_pattern = event[9]
-            step_size = 7
-            if recurring_pattern == 'D':
-                step_size = 1
+            step_size = 1
+            if recurring_pattern == 'W':
+                step_size = 7
             for i in range(1, recurring_count, step_size):
                 cursor = (step_size * i) + temp_key 
                 if cursor <= num_month_column * num_month_row:
@@ -324,7 +315,7 @@ class Ui_Form(object):
                 else:
                     break
             
-        # Get all events and place in the frame
+        # Display in the all events and place in the frame
         for key in day_dict:
             month_buttons_container[key].setText(day_dict[key])
 
@@ -348,7 +339,7 @@ class Ui_Form(object):
             end_time_str = event[5]    
             event_name = event[1]
 
-            print(f"Event: {event_name}, Start: {start_time_str}, End: {end_time_str}")
+            # print(f"Event: {event_name}, Start: {start_time_str}, End: {end_time_str}")
             try:
                 # Extract hours from the datetime strings
                 start_hour = int(start_time_str.split()[1].split(':')[0])
@@ -365,31 +356,28 @@ class Ui_Form(object):
                     item.setText(event_name)
                     item.setForeground(QtGui.QColor('green'))  # Set the text color to green
             except (IndexError, ValueError) as e:
-                print(f"Error processing event: {event_name}. Reason: {e}")
+                pass
+                # print(f"Error processing event: {event_name}. Reason: {e}")
+    
+    def enter_date(self):
+        global today
+        date = self.dateEdit.date()
+        today = today.replace(year=date.year(), month=date.month(), day=date.day())
+        self.move_to_targetdate(today)
                 
-    def show_next_day(self):
+    def move_next_frame(self):
         global today
-        new_date = today + datetime.timedelta(days=1)
+        day_step_size = select_view_list[self.selectViewBy.currentIndex()]
+        new_date = today + datetime.timedelta(days=day_step_size)
         today = new_date
-        self.refresh_date_textbox(today.day, today.month, today.year)
-        self.refresh_month_display(today.weekday(), today.month)
-        self.move_to_targetdate(str(today))
-        self.update_day_header(today)
-        self.update_week_header(today)
+        self.move_to_targetdate(today)
 
-    def show_previous_day(self):
-        new_date = today - datetime.timedelta(days=1)
-        self.update_ui_for_date(new_date)
-
-    def update_ui_for_date(self, new_date):
+    def move_prev_frame(self):
         global today
+        day_step_size = select_view_list[self.selectViewBy.currentIndex()]
+        new_date = today - datetime.timedelta(days=day_step_size)
         today = new_date
-        self.refresh_date_textbox(today.day, today.month, today.year)
-        self.refresh_month_display(today.weekday(), today.month)
-        self.move_to_targetdate(str(today))
-        self.update_day_header(today)
-        self.update_week_header(today)
-        
+        self.move_to_targetdate(today)
 
     def update_day_header(self, target_date):
         day_text = "{} {}".format(days_in_week[target_date.weekday()], target_date.day)
@@ -414,14 +402,21 @@ class Ui_Form(object):
             selected_index = self.searchBy.currentIndex()
             result_items = search_engine.event_search(search_text, search_types[selected_index])
             num_item = len(result_items)
-            for item in result_items:
-                label_string = item[1] + "\n{}[{}] - {}[{}]".format(item[2], item[4], item[3], item[5])
-                self.searchResult.addItem(label_string)
+            for arg in result_items:
+                label_str = arg[1] + "\n{}[{}] - {}[{}]".format(arg[2], arg[4], arg[3], arg[5])
+                item = QtWidgets.QListWidgetItem(label_str)
+                item.setData(1, arg[2])
+                self.searchResult.addItem(item)
         self.searchResult.setGeometry(QtCore.QRect(30, 40, 245, (num_item * 100)))
     
     def on_search_result_clicked(self, item):
         if item is not None:
-            self.move_to_targetdate()          
+            global today
+            temp_str :str = item.data(1)
+            data = temp_str.split("-")
+            today = today.replace(year=int(data[0]), month=int(data[1]), day=int(data[2]))
+            self.move_to_targetdate(today)  
+            self.searchBox.clear()        
                 
     def show_event_dialog(self):
         # Create an instance of the event creation dialog
@@ -472,11 +467,12 @@ class Ui_Form(object):
 
         self.nextButton.setText(_translate("Form", ">"))
         self.previousButton.setText(_translate("Form", "<"))
-        # Reset date edit configurq
+        self.dateSearchButton.setText(_translate("Form", "🔎"))
+        # Reset date edit configure
         self.refresh_date_textbox(today.day, today.month, today.year)
 
         # Reset month configure
-        self.refresh_month_display(first_day_index, today.month)
+        self.refresh_month_display(today)
 
         # Week display
         count = 0
@@ -502,8 +498,7 @@ class Ui_Form(object):
         self.currentDayLabel.setText(_translate("Form", "{} {} {}"
         .format(today.day, months[today.month - 1], today.year)))
         # Load all today display
-        target_date_str = str(today.year) + "-" + str(today.month) +  "-" + str(today.day)
-        self.move_to_targetdate(target_date_str)
+        self.move_to_targetdate(today)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
