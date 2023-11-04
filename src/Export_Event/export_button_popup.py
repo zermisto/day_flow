@@ -12,9 +12,9 @@
 # Created by Toiek, 10th October 2023
 
 from PyQt5 import QtCore, QtWidgets
-from export_event_class import exportEventClass
-from export_events import export_events_to_csv
-from user_input_validation import check_char_limit, check_valid_input, check_start_end_date
+from Shared_Files.Classes.all_classes import exportEventClass
+from Export_Event.export_events import export_events_to_csv
+from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
 
 
 class ExportEventPopup(object):
@@ -93,7 +93,6 @@ class ExportEventPopup(object):
         self.end_date.setDisplayFormat(_translate("Dialog", "yyyy-MM-dd"))
         self.export_filename.setPlaceholderText(
             _translate("Dialog", "file-name or file_name"))
-
 
 if __name__ == "__main__":
     import sys

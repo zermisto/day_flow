@@ -3,12 +3,14 @@
 # Creates a table called events
 # Created by King, 1st October 2023
 
-import sqlite3
-from event_class import eventClass
+import sqlite3  
+from Shared_Files.Classes.all_classes import eventClass
 
 # creating database file called eventDB.db 
 # (change to eventDB.db to :memory: to create a database in RAM for testing)
-connection = sqlite3.connect("eventDB.db")    #creating connection object
+
+# Creating a connection object to the specified database file
+connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()    #creating cursor object
 
 with connection:    #creating table called events
@@ -63,7 +65,6 @@ def remove_event(id):
     with connection:
         cursor.execute("DELETE from events WHERE id=:id", {'id': id})
 
-
 ## TEST CODE ##
 def test_code():
     # update event in table
@@ -81,9 +82,13 @@ def test_code():
 
 # print("\n*********************************\n")
 # # # search for all events
-# cursor.execute("SELECT * FROM events")
-# for row in cursor.fetchall():
-#     print(row)
+cursor.execute("SELECT * FROM events")
+for row in cursor.fetchall():
+    print(row)
+
+
+ 
+ 
 
 
 

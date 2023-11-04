@@ -5,16 +5,18 @@
 
 import sqlite3
 import csv
-from user_input_validation import check_event_timeframe
+from Shared_Files.user_input_validation import check_event_timeframe
 
-connection = sqlite3.connect("eventDB.db")    #creating connection object
+connection = sqlite3.connect("Database/eventDB.db")    #creating connection object
 
 cursor = connection.cursor()    #creating cursor object
 
 # Export events within a date range to a CSV file
 def export_events_to_csv(export_event_data):
+
+    #export the file to dir Exported_Files
     
-    filename = export_event_data.filename + ".csv"
+    filename = "Exported_Files/" + export_event_data.filename + ".csv"
     start_date = export_event_data.start_date
     end_date = export_event_data.end_date
 
