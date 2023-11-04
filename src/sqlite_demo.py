@@ -4,7 +4,7 @@
 # Created by King, 1st October 2023
 
 import sqlite3
-from event_class import eventClass
+from all_classes import eventClass
 
 # creating database file called eventDB.db 
 # (change to eventDB.db to :memory: to create a database in RAM for testing)
@@ -81,9 +81,12 @@ def test_code():
 
 # print("\n*********************************\n")
 # # # search for all events
-# cursor.execute("SELECT * FROM events")
-# for row in cursor.fetchall():
-#     print(row)
+cursor.execute("SELECT * FROM events")
+for row in cursor.fetchall():
+    print(row)
+
+ 
+ 
 
 
 

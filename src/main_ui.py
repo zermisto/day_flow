@@ -12,6 +12,7 @@
 # Created by Roong, 20th October 2023
 
 import sys
+from edit_event_popup import EditEventPopup
 from export_button_popup import ExportEventPopup
 import search_engine
 from create_event_popup import CreateEventPopup
@@ -26,7 +27,7 @@ months = [
     'January', 'February', 'March', 'April', 
     'May', 'June', 'July', 'August', 
     'September', 'October', 'November', 'December'
-]
+] 
 select_view_list = [1, 7, 30]
 today = datetime.date.today()
 today_index = today.weekday()
@@ -176,9 +177,15 @@ class Ui_Form(object):
 
         # Create button
         self.create_event_button = QtWidgets.QPushButton(Form)
-        self.create_event_button.setGeometry(QtCore.QRect(255, 10, 81, 33))
+        self.create_event_button.setGeometry(QtCore.QRect(265, 10, 81, 33)) #255 is x, 10 is y, 81 is width, 33 is height
         self.create_event_button.setObjectName("createEvent")
-        self.create_event_button.clicked.connect(self.show_event_dialog)
+        self.create_event_button.clicked.connect(self.show_create_dialog)
+        
+        # Edit button ad fadsfads fasdfasdfd
+        self.temp_edit_event_button = QtWidgets.QPushButton(Form)
+        self.temp_edit_event_button.setGeometry(QtCore.QRect(345, 10, 81, 33))
+        self.temp_edit_event_button.setObjectName("editEvent")
+        self.temp_edit_event_button.clicked.connect(self.show_edit_dialog)
 
         # Search text box
         self.searchBox = QtWidgets.QLineEdit(Form)
@@ -257,7 +264,7 @@ class Ui_Form(object):
                     elif count % 7 == 6 or count % 7 == 5:
                         item.setForeground(QtGui.QColor('indianred'))
                     else:
-                        item.setForeground(QtGui.QColor('white'))
+                        item.setForeground(QtGui.QColor('black'))
                     temp_day = temp_current_month_day
                     temp_current_month_day += 1
                 item.setText(_translate("Form", "{}".format(temp_day)))
@@ -284,7 +291,7 @@ class Ui_Form(object):
         events_in_month = {}
         events_in_month = search_engine.event_range_search(start_date, end_date)
         first_day_index = input_date.replace(day=1, month=month_index).weekday()
-        print(events_in_month)
+        # print(events_in_month)
 
         # Put all events in the dictionary
         day_dict = {}
@@ -418,13 +425,21 @@ class Ui_Form(object):
             self.move_to_targetdate(today)  
             self.searchBox.clear()        
                 
-    def show_event_dialog(self):
+    def show_create_dialog(self):
         # Create an instance of the event creation dialog
         event_dialog = QDialog()
         ui = CreateEventPopup()                  
         ui.set_up_ui(event_dialog)
         # Show the dialog
         event_dialog.exec_()
+
+    def show_edit_dialog(self):
+        # Create an instance of the event creation dialog
+        edit_dialog = QDialog()
+        ui = EditEventPopup()                  
+        ui.set_up_ui(edit_dialog)
+        # Show the dialog
+        edit_dialog.exec_()
     
     def show_export_event(self):
         # Create an instance of the event creation dialog
@@ -493,6 +508,7 @@ class Ui_Form(object):
                 count += 1
 
         self.create_event_button.setText(_translate("Form", "Create"))
+        self.temp_edit_event_button.setText(_translate("Form", "Edit")) 
         self.searchBox.setPlaceholderText(_translate("Form", "Search Event"))
         self.exportButton.setText(_translate("Form", "Export"))
         self.currentDayLabel.setText(_translate("Form", "{} {} {}"

@@ -1,23 +1,24 @@
-# create_event.py
-# Create Event Function GUI for the Personal Calendar Application
-# Created by King, 19th October 2023
+# edit_event.py
+# Edit Event Function GUI for the Personal Calendar Application
 
+# Import necessary libraries
 from PyQt5 import QtCore, QtWidgets
 import sqlite3
 import uuid
 from all_classes import eventClass
-from sqlite_demo import insert_event
+from sqlite_demo import insert_event, remove_event
 from user_input_validation import check_char_limit, check_valid_input, check_start_end_date
 
 connection = sqlite3.connect("eventDB.db")
 cursor = connection.cursor()
-
-class CreateEventPopup(QtWidgets.QWidget):
+             
+# Create the EditEventPopup class
+class EditEventPopup(object):
     def set_up_ui(self, Form):
         Form.setObjectName("Form")
-        Form.resize(440, 481)
+        Form.resize(446, 481)
 
-        # Main widget box
+          # Main widget box
         self.widget = QtWidgets.QWidget(Form)
         self.widget.setGeometry(QtCore.QRect(50, 40, 351, 391))
 
@@ -121,11 +122,13 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.spinBox_widget.setGeometry(QtCore.QRect(290, 330, 42, 22))
         self.spinBox_widget.setMinimum(1)
 
-        # OK Button
-        self.ok_button_widget = QtWidgets.QPushButton(self.widget)
-        self.ok_button_widget.setGeometry(QtCore.QRect(20, 360, 93, 28))
-        #print type of ok_button_widget
-        print(type(self.ok_button_widget))
+        # COMFIRM Button
+        self.comfirm_button_widget = QtWidgets.QPushButton(self.widget)
+        self.comfirm_button_widget.setGeometry(QtCore.QRect(20, 360, 93, 28))
+
+        # Delete Button
+        self.delete_button_widget = QtWidgets.QPushButton(self.widget)
+        self.delete_button_widget.setGeometry(QtCore.QRect(120, 360, 93, 28))
 
         # Cancel Button
         self.cancel_button_widget = QtWidgets.QPushButton(self.widget)
@@ -134,20 +137,42 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.retranslate_ui(Form)
 
         def on_ok_button_clicked():
-            if check_valid_input(self.event_title_text):
-                if check_start_end_date(self.start_date_widget.date(), self.end_date_widget.date()) == True:
-                    insert_event(self.get_input_from_user())
-                    Form.close()
+            # id = TODO get id of event
+            remove_event(id) # remove event from table
+            create_event = self.get_input_from_user()  
 
-        # Connect the OK button click event to the slot
-        self.ok_button_widget.clicked.connect(on_ok_button_clicked)
+          # On delete button clicked
+        def on_delete_button_clicked():
+            # Create a message box pop up to confirm delete
+                msg = QtWidgets.QMessageBox()
+                msg.setWindowTitle("Delete Event")
+                msg.setText("Are you sure you want to delete this event?")
+                msg.setIcon(QtWidgets.QMessageBox.Warning)
+                msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                msg.setDefaultButton(QtWidgets.QMessageBox.No)
+                if msg.exec_() == QtWidgets.QMessageBox.Yes:
+                    #id = TODO get id of event
+                    print(id)
+                    # remove_event(id) 
+                    
+                    # Create a message box pop up
+                    msg = QtWidgets.QMessageBox()
+                    msg.setWindowTitle("Delete Event")
+                    msg.setText("Event deleted successfully")
+                    msg.setIcon(QtWidgets.QMessageBox.Information)
+                Form.close()
 
-        # Connect the Cancel button click event to the slot
+
+        # Connect the OK button click event  
+        self.comfirm_button_widget.clicked.connect(on_ok_button_clicked)
+
+        # Connect the delete button click event 
+        self.delete_button_widget.clicked.connect(on_delete_button_clicked)
+
+        # Connect the Cancel button click event  
         self.cancel_button_widget.clicked.connect(Form.close)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    # Retranslate UI
-    # Sets the text and title of the widgets
     def retranslate_ui(self, Form):
         Form.setWindowTitle("Form")
         self.label_start_date.setText("Start Date")
@@ -158,8 +183,9 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.label_repeat_pattern.setText("Repeat Pattern?")
         self.label_repeat_every.setText("Repeat Every?")
         self.label_ends_after.setText("Ends After")
-        self.ok_button_widget.setText("OK")
-        self.cancel_button_widget.setText("CANCEL")
+        self.comfirm_button_widget.setText("COMFIRM")
+        self.cancel_button_widget.setText("Cancel")
+        self.delete_button_widget.setText("Delete")
 
     # Get Input From User
     # Gets the input from the user and returns an event object
@@ -185,12 +211,11 @@ class CreateEventPopup(QtWidgets.QWidget):
                                 end_time, description, location, repeat_every, repeat_pattern, repeat_count)
         return event_data
 
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
-    ui = CreateEventPopup()
-    ui.set_up_ui(Form)
+    ui = EditEventPopup()
+    ui.setup_ui(Form)
     Form.show()
     sys.exit(app.exec_())
