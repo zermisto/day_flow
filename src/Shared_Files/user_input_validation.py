@@ -57,14 +57,7 @@ def check_valid_input(text_name):
 
 
 def check_start_end_date(start_date, end_date):
-    if start_date == end_date:
-        msg = QtWidgets.QMessageBox()
-        msg.setWindowTitle("Error")
-        msg.setText("Start date needs to be at least one day before end date.")
-        msg.setIcon(QtWidgets.QMessageBox.Warning)
-        msg.exec_()
-        return False
-    elif start_date >= end_date:
+    if start_date > end_date:
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle("Error")
         msg.setText("Start date cannot be later than end date.")

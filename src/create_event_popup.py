@@ -5,11 +5,11 @@
 from PyQt5 import QtCore, QtWidgets
 import sqlite3
 import uuid
-from all_classes import eventClass
-from sqlite_demo import insert_event
-from user_input_validation import check_char_limit, check_valid_input, check_start_end_date
+from Shared_Files.Classes.all_classes import eventClass
+from Database.sqlite_demo import insert_event
+from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
 
-connection = sqlite3.connect("eventDB.db")
+connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()
 
 class CreateEventPopup(QtWidgets.QWidget):

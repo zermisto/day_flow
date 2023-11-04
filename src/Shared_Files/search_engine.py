@@ -4,7 +4,7 @@
 
 import  sqlite3
 
-connection = sqlite3.connect("eventDB.db")
+connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()
 search_types = ["name", "start_date", "end_date", "start_time", "end_time"]
 
@@ -27,3 +27,4 @@ def event_range_search(start_date, end_date):
         #TODO fix recurring logic mistake
         selected_events = cursor.fetchall()
         return selected_events
+

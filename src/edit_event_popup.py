@@ -5,11 +5,13 @@
 from PyQt5 import QtCore, QtWidgets
 import sqlite3
 import uuid
-from all_classes import eventClass
-from sqlite_demo import insert_event, remove_event
-from user_input_validation import check_char_limit, check_valid_input, check_start_end_date
+#import eventClass in folder Shared_Files -> Classes
+from Shared_Files.Classes.all_classes import eventClass
 
-connection = sqlite3.connect("eventDB.db")
+from Database.sqlite_demo import insert_event, remove_event
+from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
+
+connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()
              
 # Create the EditEventPopup class

@@ -1,0 +1,8 @@
+{
+    "python.analysis.extraPaths": [
+        "./Database",
+        "./Shared_Files/Classes",
+        "./Shared_Files",
+        "./Export_Event"
+    ]
+}
