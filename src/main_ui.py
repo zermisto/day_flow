@@ -14,7 +14,7 @@
 import sys
 from export_button_popup import ExportEventPopup
 import search_engine
-from create_event import CreateEventPopup
+from create_event_popup import CreateEventPopup
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
 import datetime

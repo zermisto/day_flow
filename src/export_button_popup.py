@@ -30,7 +30,7 @@ class ExportEventPopup(object):
         self.export_filename.setGeometry(QtCore.QRect(0, 0, 351, 31))
         self.export_filename.setObjectName("ExportFileName")
         self.export_filename.textChanged.connect(
-            lambda: check_char_limit(self.export_filename, 100))
+            lambda: check_char_limit(self.export_filename, 25))
 
         self.start_date = QtWidgets.QDateEdit(self.widget)
         self.start_date.setGeometry(QtCore.QRect(70, 40, 91, 31))
