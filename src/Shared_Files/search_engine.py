@@ -22,7 +22,7 @@ def event_range_search(start_date, end_date):
     with connection:
         cursor.execute("""SELECT * FROM events
                           WHERE DATE(end_date) <= ?
-                            AND (DATE(start_date) >= ? OR repeat_count > 0);""",
+                            AND (DATE(start_date) >= ? OR repeat_count > 1);""",
                        (end_date, start_date))
         #TODO fix recurring logic mistake
         selected_events = cursor.fetchall()
