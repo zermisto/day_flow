@@ -154,7 +154,7 @@ class EditEventPopup(object):
                 msg.setDefaultButton(QtWidgets.QMessageBox.No)
                 if msg.exec_() == QtWidgets.QMessageBox.Yes:
                     #id = TODO get id of event
-                    print(id)
+                    # print(id)
                     # remove_event(id) 
                     
                     # Create a message box pop up

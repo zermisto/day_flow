@@ -1,7 +1,10 @@
-# sqlite_demo.py
-# Create a database file called eventDB.db 
-# Creates a table called events
-# Created by King, 1st October 2023
+"""
+sqlite_demo.py
+Create a database file called eventDB.db 
+Creates a table called events
+
+Created by King, 1st October 2023
+"""
 
 import sqlite3  
 from Shared_Files.Classes.all_classes import eventClass
@@ -32,7 +35,6 @@ with connection:    #creating table called events
     #     """DROP TABLE events
     #     """
     # )
-    
     
 # repeat_every can be "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
 # repeat_pattern can be "D", "W", "M", "Y" (daily, weekly, monthly, yearly)
@@ -82,9 +84,9 @@ def test_code():
 
 # print("\n*********************************\n")
 # # # search for all events
-cursor.execute("SELECT * FROM events")
-for row in cursor.fetchall():
-    print(row)
+# cursor.execute("SELECT * FROM events")
+# for row in cursor.fetchall():
+#     print(row)
 
 
  

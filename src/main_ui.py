@@ -1,31 +1,51 @@
+"""
+main_ui.py
+
+The main user interface program for the day_flow project
+including these features
+-Search for events by their title – show all matches with date, time
+-Display month, week, and day display
+-Edit and delete event
+-Export events for a specified date range in CSV format
+most functionalities involve a lot on user interfaces
+
+Created by Roong 19 October 2023
+Last update Mhon 5th November 2023
+"""
+
+# Built-in
 import sys
-from Export_Event.export_button_popup import ExportEventPopup
-import Shared_Files.search_engine as search_engine
-from create_event_popup import CreateEventPopup
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QDialog
 import datetime
 import calendar
 import math
+# external libraries
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QDialog
+# Our libraries
+import Shared_Files.search_engine as search_engine
+from Export_Event.export_button_popup import ExportEventPopup
+from edit_event_popup import EditEventPopup
+from create_event_popup import CreateEventPopup
 
-am_pm = ["AM", "PM"]
-days_in_week = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-months = [
+# Constant
+ITEM_THRESHOLD = 1440
+AM_PM = ["AM", "PM"]
+DAYS_A_WEEK = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+MONTHS = [
     'January', 'February', 'March', 'April', 
     'May', 'June', 'July', 'August', 
     'September', 'October', 'November', 'December'
 ]
-select_view_list = [1, 7, 30]
+FRAME_STEPSIZE = [1, 7, 30]
+MONTH_ROW = 6
+MONTH_COL = 7
+# Initialize variables
 today = datetime.date.today()
 today_index = today.weekday()
 current_time = datetime.datetime.now()
 month_index = today.month
 first_day_index = today.replace(day=1).weekday()
-num_month_row = 6
-num_month_column = 7
 month_buttons_container : list = []
-items_in_month = []
-items_in_week = []
 
 class Ui_Form(object): 
     def setupUi(self, Form):
@@ -63,27 +83,28 @@ class Ui_Form(object):
         font.setPointSize(14)
         self.monthDisplay.setFont(font)
         self.monthDisplay.setAutoScrollMargin(16)
-        self.monthDisplay.setRowCount(num_month_row)
+        self.monthDisplay.setRowCount(MONTH_ROW)
         self.monthDisplay.setObjectName("Month Widget")
-        self.monthDisplay.setColumnCount(num_month_column)
-        for i in range(num_month_row):
+        self.monthDisplay.setColumnCount(MONTH_COL)
+        for i in range(MONTH_ROW):
             item = QtWidgets.QTableWidgetItem()
             item.setTextAlignment(QtCore.Qt.AlignCenter)
             self.monthDisplay.setVerticalHeaderItem(i, item)
-        for i in range(num_month_column):
+        for i in range(MONTH_COL):
             item = QtWidgets.QTableWidgetItem()
             self.monthDisplay.setHorizontalHeaderItem(i, item)
         global month_buttons_container
-        for i in range(num_month_row):
-            for j in range(num_month_column):
+        for i in range(MONTH_ROW):
+            for j in range(MONTH_COL):
                 item = QtWidgets.QTableWidgetItem()
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 item.setTextAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
                 self.monthDisplay.setItem(i, j, item)
                 # Add button objects
-                eventButton = QtWidgets.QToolButton()
+                eventButton = QtWidgets.QListWidget()
                 eventButton.setStyleSheet("margin-top: 15px; background-color: transparent;")
                 self.monthDisplay.setCellWidget(i, j, eventButton)
+                eventButton.clicked.connect(self.item_clicked)
                 month_buttons_container.append(eventButton)
         self.monthDisplay.horizontalHeader().setVisible(True)
         self.monthDisplay.horizontalHeader().setCascadingSectionResizes(True)
@@ -96,15 +117,15 @@ class Ui_Form(object):
         self.weekDisplay = QtWidgets.QTableWidget(self.widget)
         self.weekDisplay.setGeometry(QtCore.QRect(10, 40, 701, 531))
         self.weekDisplay.setObjectName("Week Widget")
-        self.weekDisplay.setColumnCount(num_month_column)
+        self.weekDisplay.setColumnCount(MONTH_COL)
         self.weekDisplay.setRowCount(24)
         count = 0
-        for i in am_pm:
+        for i in AM_PM:
             for j in range(1, 13, 1): 
                 item = QtWidgets.QTableWidgetItem()
                 self.weekDisplay.setVerticalHeaderItem(count, item)
                 count += 1
-        for i, _ in enumerate(days_in_week):
+        for i, _ in enumerate(DAYS_A_WEEK):
             item = QtWidgets.QTableWidgetItem()
             self.weekDisplay.setHorizontalHeaderItem(i, item)
 
@@ -130,7 +151,7 @@ class Ui_Form(object):
         self.dayDisplay.setColumnCount(1)
         self.dayDisplay.setRowCount(24)
         count = 0
-        for i in am_pm:
+        for i in AM_PM:
             for j in range(1, 13, 1):
                 item = QtWidgets.QTableWidgetItem()
                 self.dayDisplay.setVerticalHeaderItem(count, item)
@@ -213,7 +234,7 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         self.monthDisplay.setSortingEnabled(False)
         # set header columns
-        for i, day in enumerate(days_in_week):
+        for i, day in enumerate(DAYS_A_WEEK):
             item = self.monthDisplay.horizontalHeaderItem(i)
             item.setText(_translate("Form", day))
         __sortingEnabled = self.monthDisplay.isSortingEnabled()
@@ -228,8 +249,8 @@ class Ui_Form(object):
         last_day = calendar.monthrange(target_day.year, target_day.month)[1]
         temp_last_day_prev_month = last_day_prev_month - first_day_index + 1
         count = 0
-        for i in range(num_month_row):
-            for j in range(num_month_column):
+        for i in range(MONTH_ROW):
+            for j in range(MONTH_COL):
                 item = self.monthDisplay.item(i, j)
                 if count < first_day_index:
                     item.setForeground(QtGui.QColor('grey'))
@@ -245,196 +266,156 @@ class Ui_Form(object):
                     elif count % 7 == 6 or count % 7 == 5:
                         item.setForeground(QtGui.QColor('indianred'))
                     else:
-                        item.setForeground(QtGui.QColor('black'))
+                        item.setForeground(QtGui.QColor(''))
                     temp_day = temp_current_month_day
                     temp_current_month_day += 1
                 item.setText(_translate("Form", "{}".format(temp_day)))
-                month_buttons_container[count].setText("")
+                month_buttons_container[count].clear()
                 count += 1
         self.monthDisplay.setSortingEnabled(__sortingEnabled)
 
-    def refresh_date_textbox(self, target_day, target_month, target_year):
-        self.dateEdit.setDate(QtCore.QDate(target_year, target_month, target_day))
-
     def move_to_targetdate(self, input_date : datetime.date):
         # Update dateEdit box
-        self.refresh_date_textbox(today.day, today.month, today.year)
+        self.dateEdit.setDate(QtCore.QDate(today.year, today.month, today.day))
         # Update day display
         self.update_day_header(today)
+
+        # start_date = str(year) + "-" + str(month) +  "-" + "1"
+        # end_date = str(year) + "-" + str(month) + "-" + str(month - 1)
+        # events_in_day = {}
+        # events_in_day = search_engine.event_range_search(start_date, end_date)
+        
+        # # Set column header text
+        # today_column_text = "{} {}".format(DAYS_A_WEEK[today_index], today.day)
+        # header_item = QtWidgets.QTableWidgetItem(today_column_text)
+        # self.dayDisplay.setHorizontalHeaderItem(0, header_item)
+
+        # # Clear all cells in the day display
+        # for row in range(self.dayDisplay.rowCount()):
+        #     item = self.dayDisplay.item(row, 0)
+        #     item.setText("")
+        #     item.setForeground(QtGui.QColor('black'))
+
+        # for event in events_in_day:
+        #     event_name = event[1]
+        #     start_date_str = event[2]
+        #     end_date_str = event[3]
+        #     start_time_str = event[4]
+        #     end_time_str = event[5]
+
+        #     # print(event_name, start_date_str, end_date_str, start_time_str, end_time_str)
+        #     startD = start_date_str.split(" ")[0]
+        #     year, month, day = startD.split("-")
+            
+        #     # Check if the event is on the target day
+        #     if start_date_str == end_date_str:
+        #         if start_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
+        #             # Extract hours from the datetime strings
+        #             start_hour = math.ceil(float(start_time_str.split(':')[0]))
+        #             end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+        #             # Ensure the indices are within the valid range (0 to 23)
+        #             start_index = start_hour % 24
+        #             end_index = end_hour % 24
+
+        #             # Update cells in the day display based on day_dict keys
+        #             for index in range(start_index, end_index):
+        #                 indicies = index
+        #                 item = self.dayDisplay.item(indicies, 0)
+        #                 item.setText(event_name)
+        #                 item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+        #     else:
+        #         if start_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
+        #             # Extract hours from the datetime strings
+        #             start_hour = math.ceil(float(start_time_str.split(':')[0]))
+        #             end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+        #             # Ensure the indices are within the valid range (0 to 23)
+        #             start_index = start_hour % 24
+        #             end_index = end_hour % 24
+
+        #             # Update cells in the day display based on day_dict keys
+        #             for index in range(start_index, end_index):
+        #                 indicies = index
+        #                 item = self.dayDisplay.item(indicies, 0)
+        #                 item.setText(event_name)
+        #                 item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+
+        #         if end_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
+        #             # Extract hours from the datetime strings
+        #             start_hour = math.ceil(float(start_time_str.split(':')[0]))
+        #             end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+        #             # Ensure the indices are within the valid range (0 to 23)
+        #             start_index = start_hour % 24
+        #             end_index = end_hour % 24
+
+        #             # Update cells in the day display based on day_dict keys
+        #             for index in range(start_index, end_index):
+        #                 indicies = index
+        #                 item = self.dayDisplay.item(indicies, 0)
+        #                 item.setText(event_name)
+        #                 item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+
+        #     for event in events_in_day:
+        #         event_name = event[1]
+        #         start_date_str = event[2]
+        #         end_date_str = event[3]
+        #         start_time_str = event[4]
+        #         end_time_str = event[5]
+
+        #         # print(event_name, start_date_str, end_date_str, start_time_str, end_time_str)
+        #         startD = start_date_str.split(" ")[0]
+        #         year, month, day = startD.split("-")
+
+        #         # Iterate over the days of the week
+        #         for i, weekday in enumerate(DAYS_A_WEEK):
+        #             # Calculate the date for the current day in the week
+        #             current_date = today + datetime.timedelta(days=i)
+
+        #             # Check if the event falls on the current day
+        #             if (
+        #                 current_date.year == int(year)
+        #                 and current_date.month == int(month)
+        #                 and current_date.day == int(day)
+        #             ):
+        #                 # Extract hours from the datetime strings
+        #                 start_hour = math.ceil(float(start_time_str.split(':')[0]))
+        #                 end_hour = math.ceil(float(end_time_str.split(':')[0]))
+
+        #                 # Ensure the indices are within the valid range (0 to 23)
+        #                 start_index = start_hour % 24
+        #                 end_index = end_hour % 24
+
+        #                 # Initialize items in the week display if not already initialized
+        #                 for row in range(self.weekDisplay.rowCount()):
+        #                     if self.weekDisplay.item(row, i) is None:
+        #                         item = QtWidgets.QTableWidgetItem()
+        #                         self.weekDisplay.setItem(row, i, item)
+
+        #                 # Update cells in the week display based on the day_dict keys
+        #                 for index in range(start_index, end_index):
+        #                     indicies = index
+        #                     item = self.weekDisplay.item(indicies, i)
+        #                     item.setText(event_name)
+        #                     item.setForeground(QtGui.QColor('green'))  # Set the text color to green
+
         # Update week display
         self.update_week_header(today)
         # Update month display
         self.refresh_month_display(today)
-        month = input_date.month
-        year = input_date.year
-        start_date = str(year) + "-" + str(month) +  "-" + "1"
-        end_date = str(year) + "-" + str(month) + "-" + str(month - 1)
+        last_day = calendar.monthrange(input_date.year, today.month)[1]
+        start_date = input_date.strftime('%Y-%m-01')
+        end_date = input_date.strftime('%Y-%m-'+str(last_day))
         events_in_month = {}
         events_in_month = search_engine.event_range_search(start_date, end_date)
-        first_day_index = input_date.replace(day=1, month=month_index).weekday()
-
-        # Update day display
-        start_date = str(2000) + "-" + str(month) +  "-" + "1"
-        end_date = str(3000) + "-" + str(month) + "-" + str(month - 1)
-        events_in_day = {}
-        events_in_day = search_engine.event_range_search(start_date, end_date)
-        print(events_in_day, "events in day")
-
-        # Set column header text
-        today_column_text = "{} {}".format(days_in_week[today_index], today.day)
-        header_item = QtWidgets.QTableWidgetItem(today_column_text)
-        self.dayDisplay.setHorizontalHeaderItem(0, header_item)
-
-        # Clear all cells in the day display
-        for row in range(self.dayDisplay.rowCount()):
-            item = self.dayDisplay.item(row, 0)
-            item.setText("")
-            item.setForeground(QtGui.QColor('black'))
-
-        for event in events_in_day:
-            event_name = event[1]
-            start_date_str = event[2]
-            end_date_str = event[3]
-            start_time_str = event[4]
-            end_time_str = event[5]
-
-            # print(event_name, start_date_str, end_date_str, start_time_str, end_time_str)
-            startD = start_date_str.split(" ")[0]
-            year, month, day = startD.split("-")
-            print(year, month, day)
-            
-            # Check if the event is on the target day
-            if start_date_str == end_date_str:
-                if start_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
-                    # Extract hours from the datetime strings
-                    start_hour = math.ceil(float(start_time_str.split(':')[0]))
-                    end_hour = math.ceil(float(end_time_str.split(':')[0]))
-
-                    # Ensure the indices are within the valid range (0 to 23)
-                    start_index = start_hour % 24
-                    end_index = end_hour % 24
-
-                    # Update cells in the day display based on day_dict keys
-                    for index in range(start_index, end_index):
-                        indicies = index
-                        print(indicies)
-                        item = self.dayDisplay.item(indicies, 0)
-                        item.setText(event_name)
-                        item.setForeground(QtGui.QColor('green'))  # Set the text color to green
-            else:
-                if start_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
-                    # Extract hours from the datetime strings
-                    start_hour = math.ceil(float(start_time_str.split(':')[0]))
-                    end_hour = math.ceil(float(end_time_str.split(':')[0]))
-
-                    # Ensure the indices are within the valid range (0 to 23)
-                    start_index = start_hour % 24
-                    end_index = end_hour % 24
-
-                    # Update cells in the day display based on day_dict keys
-                    for index in range(start_index, end_index):
-                        indicies = index
-                        print(indicies)
-                        item = self.dayDisplay.item(indicies, 0)
-                        item.setText(event_name)
-                        item.setForeground(QtGui.QColor('green'))  # Set the text color to green
-
-                if end_date_str == str(today.year) + "-" + str(today.month).zfill(2) + "-" + str(today.day).zfill(2):
-                    # Extract hours from the datetime strings
-                    start_hour = math.ceil(float(start_time_str.split(':')[0]))
-                    end_hour = math.ceil(float(end_time_str.split(':')[0]))
-
-                    # Ensure the indices are within the valid range (0 to 23)
-                    start_index = start_hour % 24
-                    end_index = end_hour % 24
-
-                    # Update cells in the day display based on day_dict keys
-                    for index in range(start_index, end_index):
-                        indicies = index
-                        print(indicies)
-                        item = self.dayDisplay.item(indicies, 0)
-                        item.setText(event_name)
-                        item.setForeground(QtGui.QColor('green'))  # Set the text color to green
-
-            for event in events_in_day:
-                event_name = event[1]
-                start_date_str = event[2]
-                end_date_str = event[3]
-                start_time_str = event[4]
-                end_time_str = event[5]
-
-                # print(event_name, start_date_str, end_date_str, start_time_str, end_time_str)
-                startD = start_date_str.split(" ")[0]
-                year, month, day = startD.split("-")
-                print(year, month, day)
-
-                # Iterate over the days of the week
-                for i, weekday in enumerate(days_in_week):
-                    # Calculate the date for the current day in the week
-                    current_date = today + datetime.timedelta(days=i)
-
-                    # Check if the event falls on the current day
-                    if (
-                        current_date.year == int(year)
-                        and current_date.month == int(month)
-                        and current_date.day == int(day)
-                    ):
-                        # Extract hours from the datetime strings
-                        start_hour = math.ceil(float(start_time_str.split(':')[0]))
-                        end_hour = math.ceil(float(end_time_str.split(':')[0]))
-
-                        # Ensure the indices are within the valid range (0 to 23)
-                        start_index = start_hour % 24
-                        end_index = end_hour % 24
-
-                        # Initialize items in the week display if not already initialized
-                        for row in range(self.weekDisplay.rowCount()):
-                            if self.weekDisplay.item(row, i) is None:
-                                item = QtWidgets.QTableWidgetItem()
-                                self.weekDisplay.setItem(row, i, item)
-
-                        # Update cells in the week display based on the day_dict keys
-                        for index in range(start_index, end_index):
-                            indicies = index
-                            print(indicies)
-                            item = self.weekDisplay.item(indicies, i)
-                            item.setText(event_name)
-                            item.setForeground(QtGui.QColor('green'))  # Set the text color to green
-
-
+        first_day_index = input_date.replace(day=1, month=input_date.month).weekday()
         # Put all events in the dictionary
-        day_dict = {}
-        def add_event_to_dict(temp_key, temp_value):
-            if day_dict.get(temp_key) == None:
-                day_dict[temp_key] = str(temp_value) + "\n"
-            else:
-                splited_events = day_dict[temp_key].split("\n")
-                if len(splited_events) < 3:
-                    day_dict[temp_key] = str(day_dict[temp_key]) + str(temp_value)
-                else:
-                    day_dict[temp_key] = str(day_dict[temp_key]) + "..."
-       
         for event in events_in_month:
             temp_y_m_d = event[2].split("-")
             temp_key = int(temp_y_m_d[2]) - 1 + first_day_index
-            temp_value = event[1]
-            add_event_to_dict(temp_key, temp_value)
-            recurring_count = event[10]
-            recurring_pattern = event[9]
-            step_size = 1
-            if recurring_pattern == 'W':
-                step_size = 7
-            for i in range(1, recurring_count, step_size):
-                cursor = (step_size * i) + temp_key 
-                if cursor <= num_month_column * num_month_row:
-                    add_event_to_dict(cursor, temp_value)
-                else:
-                    break
-            
-        # Display in the all events and place in the frame
-        for key in day_dict:
-            month_buttons_container[key].setText(day_dict[key])
-    
+            month_buttons_container[temp_key].addItem(event[1])
+
     def enter_date(self):
         global today
         date = self.dateEdit.date()
@@ -443,25 +424,25 @@ class Ui_Form(object):
                 
     def move_next_frame(self):
         global today
-        day_step_size = select_view_list[self.selectViewBy.currentIndex()]
+        day_step_size = FRAME_STEPSIZE[self.selectViewBy.currentIndex()]
         new_date = today + datetime.timedelta(days=day_step_size)
         today = new_date
         self.move_to_targetdate(today)
 
     def move_prev_frame(self):
         global today
-        day_step_size = select_view_list[self.selectViewBy.currentIndex()]
+        day_step_size = FRAME_STEPSIZE[self.selectViewBy.currentIndex()]
         new_date = today - datetime.timedelta(days=day_step_size)
         today = new_date
         self.move_to_targetdate(today)
 
     def update_day_header(self, target_date):
-        day_text = "{} {}".format(days_in_week[target_date.weekday()], target_date.day)
+        day_text = "{} {}".format(DAYS_A_WEEK[target_date.weekday()], target_date.day)
         header_item = QtWidgets.QTableWidgetItem(day_text)
         self.dayDisplay.setHorizontalHeaderItem(0, header_item)
 
     def update_week_header(self, target_date):
-        for i, day in enumerate(days_in_week):
+        for i, day in enumerate(DAYS_A_WEEK):
             day_text = "{} {}".format(day, target_date.day + i)
             header_item = QtWidgets.QTableWidgetItem(day_text)
             self.weekDisplay.setHorizontalHeaderItem(i, header_item)
@@ -486,29 +467,35 @@ class Ui_Form(object):
         self.searchResult.setGeometry(QtCore.QRect(30, 40, 245, (num_item * 100)))
     
     def on_search_result_clicked(self, item):
-        if item is not None:
+        if item is not None: # handle deleted items
             global today
             temp_str :str = item.data(1)
             data = temp_str.split("-")
             today = today.replace(year=int(data[0]), month=int(data[1]), day=int(data[2]))
             self.move_to_targetdate(today)  
             self.searchBox.clear()        
-                
+    
+    def item_clicked(self, item):
+        if item is not None: # handle deleted items
+            # Create an instance of the event creation dialog
+            event_dialog = QDialog()
+            ui = EditEventPopup()                 
+            ui.set_up_ui(event_dialog)
+            event_dialog.exec_() # Show the dialog
+
     def show_event_dialog(self):
         # Create an instance of the event creation dialog
         event_dialog = QDialog()
         ui = CreateEventPopup()                  
         ui.set_up_ui(event_dialog)
-        # Show the dialog
-        event_dialog.exec_()
+        event_dialog.exec_() # Show the dialog
     
     def show_export_event(self):
         # Create an instance of the event creation dialog
         event_export = QDialog()
         ui = ExportEventPopup()                  
         ui.set_up_ui(event_export)
-        # Show the dialog
-        event_export.exec_()
+        event_export.exec_() # Show the dialog
 
     def on_display_changed(self, index):
         # Get the selected text from the ComboBox
@@ -544,25 +531,20 @@ class Ui_Form(object):
         self.nextButton.setText(_translate("Form", ">"))
         self.previousButton.setText(_translate("Form", "<"))
         self.dateSearchButton.setText(_translate("Form", "🔎"))
-        # Reset date edit configure
-        self.refresh_date_textbox(today.day, today.month, today.year)
-
-        # Reset month configure
-        self.refresh_month_display(today)
 
         # Week display
         count = 0
-        for i in am_pm:
+        for i in AM_PM:
             for j in range(1, 13, 1):
                 item = self.weekDisplay.verticalHeaderItem(count)
                 item.setText(_translate("Form", "{} {}".format(j, i)))
                 count += 1
-        for i, day in enumerate(days_in_week):
+        for i, day in enumerate(DAYS_A_WEEK):
             item = self.weekDisplay.horizontalHeaderItem(i)
             item.setText(_translate("Form", "{} {}".format(day, today.day + i)))
 
         count = 0
-        for i in am_pm: 
+        for i in AM_PM: 
             for j in range(1, 13, 1):
                 item = self.dayDisplay.verticalHeaderItem(count)
                 item.setText(_translate("Form", "{} {}".format(j, i)))
@@ -572,7 +554,7 @@ class Ui_Form(object):
         self.searchBox.setPlaceholderText(_translate("Form", "Search Event"))
         self.exportButton.setText(_translate("Form", "Export"))
         self.currentDayLabel.setText(_translate("Form", "{} {} {}"
-        .format(today.day, months[today.month - 1], today.year)))
+        .format(today.day, MONTHS[today.month - 1], today.year)))
         # Load all today display
         self.move_to_targetdate(today)
 

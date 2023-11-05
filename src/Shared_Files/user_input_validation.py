@@ -1,6 +1,10 @@
-# user_input_validation.py
-# Contains all functions for validating user input
-# Created by King, 31th October 2023
+"""
+user_input_validation.py
+
+Contains all functions for validating user input
+
+Created by King, 31th October 2023
+"""
 
 from PyQt5 import QtCore, QtWidgets
 

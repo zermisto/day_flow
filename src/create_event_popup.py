@@ -125,7 +125,7 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.ok_button_widget = QtWidgets.QPushButton(self.widget)
         self.ok_button_widget.setGeometry(QtCore.QRect(20, 360, 93, 28))
         #print type of ok_button_widget
-        print(type(self.ok_button_widget))
+        #print(type(self.ok_button_widget))
 
         # Cancel Button
         self.cancel_button_widget = QtWidgets.QPushButton(self.widget)
