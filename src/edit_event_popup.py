@@ -241,6 +241,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
     ui = EditEventPopup()
-    ui.setup_ui(Form)
+    ui.set_up_ui(Form)
     Form.show()
     sys.exit(app.exec_())

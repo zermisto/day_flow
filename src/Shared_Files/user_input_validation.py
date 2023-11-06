@@ -8,6 +8,7 @@ Created by King, 31th October 2023
 
 from PyQt5 import QtCore, QtWidgets
 
+
 # Check Character Limit
 # Checks the character limit of the text in the QTextEdit
 
@@ -39,7 +40,7 @@ def check_valid_input(text_name):
         # create a messabge box pop up
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle("Error")
-        msg.setText("Please fill in all the fields")
+        msg.setText("Please fill in the title field")
         msg.setIcon(QtWidgets.QMessageBox.Warning)
         msg.exec_()
         return False
