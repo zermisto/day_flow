@@ -15,7 +15,7 @@ connection = sqlite3.connect("Database/eventDB.db")    #creating connection obje
 
 cursor = connection.cursor()    #creating cursor object
 
-# Export events within a date range to a CSV file
+""" Export events within a date range to a CSV file"""
 def export_events_to_csv(export_event_data):
 
     #export the file to dir Exported_Files
@@ -54,12 +54,4 @@ def export_events_to_csv(export_event_data):
     
     print(f"Selected events have been exported to '{filename}'.")
 
-# Example usage of exporting events to CSV
-#if __name__ == "__main__":
 
-    #export_events_to_csv("2023-09-01", "2023-11-01", "selected_events.csv")
-    # start_date = "2023-09-01"  # Replace with your desired start date
-    # end_date = "2023-11-01"    # Replace with your desired end date
-    # csv_filename = "selected_events.csv"  # Specify the CSV file name
-
-    #export_events_to_csv(start_date, end_date, csv_filename)

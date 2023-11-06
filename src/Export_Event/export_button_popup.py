@@ -19,8 +19,14 @@ from Shared_Files.Classes.all_classes import exportEventClass
 from Export_Event.export_events import export_events_to_csv
 from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
 
-
+""" Create a class for the export button popup window 
+    The popup window will ask the user to input the filename, start date and end date
+    The popup window will also have an OK button and a Cancel button
+    The OK button will call the export_events_to_csv function to export the events to a csv file
+    The Cancel button will close the popup window
+"""
 class ExportEventPopup(object):
+    """ Set up the UI for the export button popup window"""
     def set_up_ui(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(407, 207)
@@ -59,7 +65,7 @@ class ExportEventPopup(object):
         self.ok_button = QtWidgets.QPushButton(self.widget)
         self.ok_button.setGeometry(QtCore.QRect(60, 100, 93, 28))
         self.ok_button.setObjectName("OkButton")
-
+        """ Check if the input from the user is valid"""
         def on_ok_button_clicked():
             if check_valid_input(self.export_filename):
                 if check_start_end_date(self.start_date.date(), self.end_date.date()) == True:
@@ -77,14 +83,16 @@ class ExportEventPopup(object):
 
         self.retranslate_ui(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-
+    """ Get the input from the user"""
     def get_input_from_user(self):
         filename = self.export_filename.toPlainText()
         start_date = self.start_date.text()
         end_date = self.end_date.text()
         export_event_data = exportEventClass(filename, start_date, end_date)
         return export_event_data
-
+    """ Set the text for the UI elements
+        Set the title for the popup window
+    """
     def retranslate_ui(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
