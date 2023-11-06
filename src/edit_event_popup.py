@@ -7,7 +7,7 @@ import sqlite3
 import uuid
 #import eventClass in folder Shared_Files -> Classes
 from Shared_Files.Classes.all_classes import eventClass
-
+from Shared_Files.search_engine import event_search
 from Database.sqlite_demo import insert_event, remove_event
 from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
 
@@ -16,11 +16,20 @@ cursor = connection.cursor()
              
 # Create the EditEventPopup class
 class EditEventPopup(object):
-    def set_up_ui(self, Form):
+    def set_up_ui(self, Form, event_id):
+
+        # Get the target item by ID
+        event_items = event_search(str(event_id), "id")
+        if len(event_items) < 1:
+            QtWidgets.QMessageBox.warning(Form, 'No Item Found', 'No item found for the given event ID.')
+            Form.close()
+            return False
+        target_event = event_items[0]
+
         Form.setObjectName("Form")
         Form.resize(446, 481)
 
-          # Main widget box
+        # Main widget boxs
         self.widget = QtWidgets.QWidget(Form)
         self.widget.setGeometry(QtCore.QRect(50, 40, 351, 391))
 
@@ -28,6 +37,7 @@ class EditEventPopup(object):
         self.event_title_text = QtWidgets.QTextEdit(self.widget)
         self.event_title_text.setGeometry(QtCore.QRect(0, 0, 351, 31))
         self.event_title_text.setPlaceholderText("Event Title")
+        self.event_title_text.setText(target_event[1])
         self.event_title_text.textChanged.connect(
             lambda: check_char_limit(self.event_title_text, 100))
 
@@ -39,7 +49,7 @@ class EditEventPopup(object):
         self.start_date_widget = QtWidgets.QDateEdit(self.widget)
         self.start_date_widget.setGeometry(QtCore.QRect(65, 40, 91, 31))
         self.start_date_widget.setDisplayFormat("yyyy-MM-dd")
-        self.start_date_widget.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.start_date_widget.setDateTime(QtCore.QDateTime.fromString(target_event[2], "yyyy-MM-dd"))
 
         # Label Start Time
         self.label_start_time = QtWidgets.QLabel(self.widget)
@@ -49,7 +59,7 @@ class EditEventPopup(object):
         self.start_time_widget = QtWidgets.QTimeEdit(self.widget)
         self.start_time_widget.setGeometry(QtCore.QRect(65, 80, 81, 31))
         self.start_time_widget.setDisplayFormat("hh:mm")
-        self.start_time_widget.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.start_time_widget.setDateTime(QtCore.QDateTime.fromString(target_event[4], "hh:mm"))
 
         # Label End Date
         self.label_end_state = QtWidgets.QLabel(self.widget)
@@ -59,7 +69,8 @@ class EditEventPopup(object):
         self.end_date_widget = QtWidgets.QDateEdit(self.widget)
         self.end_date_widget.setGeometry(QtCore.QRect(230, 40, 91, 31))
         self.end_date_widget.setDisplayFormat("yyyy-MM-dd")
-        self.end_date_widget.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.end_date_widget.setDateTime(QtCore.QDateTime.fromString(target_event[3], "yyyy-MM-dd"))
+
 
         # Label End Time
         self.label_end_time = QtWidgets.QLabel(self.widget)
@@ -69,7 +80,7 @@ class EditEventPopup(object):
         self.end_time_widget = QtWidgets.QTimeEdit(self.widget)
         self.end_time_widget.setGeometry(QtCore.QRect(230, 80, 81, 31))
         self.end_time_widget.setDisplayFormat("hh:mm")
-        self.end_time_widget.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.end_time_widget.setDateTime(QtCore.QDateTime.fromString(target_event[5], "hh:mm"))
 
         # Description
         self.description_text = QtWidgets.QTextEdit(self.widget)
@@ -77,6 +88,7 @@ class EditEventPopup(object):
         self.description_text.setPlaceholderText("Description")
         self.description_text.textChanged.connect(
             lambda: check_char_limit(self.description_text, 100))
+        self.description_text.setText(target_event[6])
 
         # Location
         self.location_text = QtWidgets.QTextEdit(self.widget)
@@ -84,6 +96,7 @@ class EditEventPopup(object):
         self.location_text.setPlaceholderText("Location")
         self.location_text.textChanged.connect(
             lambda: check_char_limit(self.location_text, 100))
+        self.location_text.setText(target_event[7])
 
         # Label Repeat Pattern
         self.label_repeat_pattern = QtWidgets.QLabel(self.widget)
@@ -93,6 +106,9 @@ class EditEventPopup(object):
         self.comboBox_widget = QtWidgets.QComboBox(self.widget)
         self.comboBox_widget.setGeometry(QtCore.QRect(10, 310, 73, 22))
         self.comboBox_widget.addItems(["Daily", "Weekly", "Monthly", "Yearly"])
+        index = self.comboBox_widget.findText(target_event[9])
+        if index >= 0:
+            self.comboBox_widget.setCurrentIndex(index)
 
         # Label Repeat Every
         self.label_repeat_every = QtWidgets.QLabel(self.widget)
@@ -102,6 +118,9 @@ class EditEventPopup(object):
         self.comboBox_2_widget = QtWidgets.QComboBox(self.widget)
         self.comboBox_2_widget.setGeometry(QtCore.QRect(120, 310, 73, 22))
         self.comboBox_2_widget.addItems(["Mon", "Tue", "Wed", "Thu", "Fri"])
+        index = self.comboBox_2_widget.findText(target_event[8])
+        if index >= 0:
+            self.comboBox_2_widget.setCurrentIndex(index)
 
         # Label Repeat Count
         self.label_repeat_count = QtWidgets.QLabel(self.widget)
@@ -111,6 +130,10 @@ class EditEventPopup(object):
         self.checkBox_widget = QtWidgets.QCheckBox(self.widget)
         self.checkBox_widget.setGeometry(QtCore.QRect(230, 310, 91, 20))
         self.checkBox_widget.setText("Forever")
+        target_value = False
+        if (target_event[-1]) < 0:
+            target_value = True
+        self.checkBox_widget.setChecked(target_value)
         # if user click forever, disable the spinBox
         self.checkBox_widget.stateChanged.connect(
             lambda: self.spinBox_widget.setDisabled(self.checkBox_widget.isChecked()))
@@ -123,7 +146,8 @@ class EditEventPopup(object):
         self.spinBox_widget = QtWidgets.QSpinBox(self.widget)
         self.spinBox_widget.setGeometry(QtCore.QRect(290, 330, 42, 22))
         self.spinBox_widget.setMinimum(1)
-
+        self.spinBox_widget.setValue(int(target_event[-1]))
+ 
         # COMFIRM Button
         self.comfirm_button_widget = QtWidgets.QPushButton(self.widget)
         self.comfirm_button_widget.setGeometry(QtCore.QRect(20, 360, 93, 28))
@@ -155,8 +179,7 @@ class EditEventPopup(object):
                 if msg.exec_() == QtWidgets.QMessageBox.Yes:
                     #id = TODO get id of event
                     # print(id)
-                    # remove_event(id) 
-                    
+                    # remove_event(id)
                     # Create a message box pop up
                     msg = QtWidgets.QMessageBox()
                     msg.setWindowTitle("Delete Event")

@@ -28,7 +28,6 @@ def event_search(pattern, type="name", maximum_items = 5):
 
 def event_range_search(start_date, end_date):
     with connection:
-        print(start_date, end_date)
         cursor.execute("""SELECT * FROM events
                           WHERE end_date >= ? AND start_date <= ?;""",
                        (start_date, end_date))
