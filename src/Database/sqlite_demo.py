@@ -65,8 +65,8 @@ def edit_event(event):
 # remove event from table using id
 def remove_event(id):
     with connection:
-        cursor.execute("DELETE from events WHERE id=:id", {'id': id})
-
+        cursor.execute("DELETE from events WHERE id = ?", (id,))
+    
 ## TEST CODE ##
 def test_code():
     # update event in table
