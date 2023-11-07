@@ -217,8 +217,8 @@ class Ui_Form(object):
         start_date = input_date.strftime('%Y-%m-%d')
         events_in_day = search_engine.event_range_search(start_date, start_date)
         for event in events_in_day:
-            start_time = int(event[4].split(":")[0])
-            end_time = int(event[5].split(":")[0])
+            start_time = int(event[4].split(":")[0]) - 1
+            end_time = int(event[5].split(":")[0]) - 1
             for i in range(start_time, end_time + 1):
                 item_label = str(event[1]) + " \t[" + str(event[4]) + "-" + str((event[5])) +  " ]\t" + str(event[6])
                 item = QtWidgets.QListWidgetItem(item_label)
@@ -227,14 +227,29 @@ class Ui_Form(object):
 
         # Update week display
         start_date = input_date.strftime('%Y-%m-%d')
-        temp_date = input_date + datetime.timedelta(days=7)
+        temp_date = input_date + datetime.timedelta(days=DISPLAY_COL - 1)
         end_date = temp_date.strftime('%Y-%m-%d')
         events_in_week = search_engine.event_range_search(start_date, end_date)
 
         # Add item in the list in each week cells
         for event in events_in_week:
-            # Roong TODO 
-            pass
+            print(event[0])
+            event_start_date = datetime.datetime.strptime(event[2], "%Y-%m-%d").date()
+            event_end_date = datetime.datetime.strptime(event[3], "%Y-%m-%d").date()
+            event_start_time = datetime.datetime.strptime(event[4], "%H:%M").time()
+            event_end_time = datetime.datetime.strptime(event[5], "%H:%M").time()
+            
+            print(event_start_time.hour, event_end_time.hour)
+            
+            for i in range(DISPLAY_COL):
+                current_cell_date = input_date + datetime.timedelta(days=i)
+
+                if event_start_date <= current_cell_date <= event_end_date:
+                    for j in range(event_start_time.hour, event_end_time.hour + 1):
+                        item_label = f"{event[1]}"
+                        item = QtWidgets.QListWidgetItem(item_label)
+                        item.setData(1, event[0])
+                        week_buttons_container[(j - 1) + i * HOURS_A_DAY].addItem(item)
         
         # Update month display
         last_day = calendar.monthrange(input_date.year, today.month)[1]
@@ -281,15 +296,15 @@ class Ui_Form(object):
 
     def refresh_week_display(self, target_date):
         for i, day in enumerate(DAYS_A_WEEK):
-            day_text = "{} {}".format(day, target_date.day + i)
+            day_text = "{} {}".format(day, (target_date + datetime.timedelta(days=i)).day)
             header_item = QtWidgets.QTableWidgetItem(day_text)
             self.weekDisplay.setHorizontalHeaderItem(i, header_item)
-        # Clear all items in list
+
+        # Clear all items in the list
         count = 0
         for i in range(DISPLAY_COL):
             for j in range(HOURS_A_DAY):
-                # ROONG TODO Here
-                # week_buttons_container[count].clear()
+                week_buttons_container[count].clear()
                 count += 1
 
     def refresh_month_display(self, target_day : datetime.date):
@@ -416,7 +431,7 @@ class Ui_Form(object):
                     item = target_table.verticalHeaderItem(count)
                     item.setText(_translate("Form", "{} {}".format(j, i)))
                 count += 1
-        
+
         # Day display buttons
         j = 0
         for i in range(HOURS_A_DAY):
@@ -436,8 +451,18 @@ class Ui_Form(object):
         # Week display buttons
         for i in range(DISPLAY_COL):
             for j in range(HOURS_A_DAY):
-                # ROONG TODO here
-                pass
+                item = QtWidgets.QTableWidgetItem() 
+                item.setFlags(QtCore.Qt.ItemIsEnabled)
+                item.setTextAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
+                self.weekDisplay.setItem(j, i, item)
+                # Add list object
+                eventList = QtWidgets.QListWidget()
+                eventList.setStyleSheet("margin-top: 5px; background-color: transparent;")
+                eventList.font().setPointSize(20)
+                self.weekDisplay.setCellWidget(j, i, eventList)
+                eventList.itemClicked.connect(self.item_clicked)
+                week_buttons_container.append(eventList)  # Add the list object to the container
+        self.weekDisplay.verticalHeader().setDefaultSectionSize(50)
 
         # Month display Buttons
         global month_buttons_container
@@ -466,6 +491,8 @@ class Ui_Form(object):
 
         # Load all today display
         self.move_to_targetdate(today)
+        # week_buttons_container[0].addItem("hello")
+        # week_buttons_container[33].addItem("hello")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
