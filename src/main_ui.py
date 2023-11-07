@@ -24,7 +24,6 @@ from PyQt5.QtWidgets import QDialog
 # Our libraries
 import Shared_Files.search_engine as search_engine
 from Export_Event.export_button_popup import ExportEventPopup
-from edit_event_popup import EditEventPopup
 from create_event_popup import CreateEventPopup
 
 # Constant
@@ -369,7 +368,7 @@ class Ui_Form(object):
         if item is not None: # handle deleted items
             # Create an instance of the event creation dialog
             event_dialog = QDialog()
-            ui = EditEventPopup()     
+            ui = CreateEventPopup()     
             id = item.data(1)   
             ui.set_up_ui(event_dialog, id)
             event_dialog.exec_() # Show the dialog

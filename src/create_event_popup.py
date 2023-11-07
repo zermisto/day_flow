@@ -8,13 +8,14 @@ import uuid
 import datetime
 from Shared_Files.Classes.all_classes import eventClass
 from Database.sqlite_demo import insert_event
+from Shared_Files.search_engine import event_search
 from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
 
 connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()
 
 class CreateEventPopup(QtWidgets.QWidget):
-    def set_up_ui(self, Form):
+    def set_up_ui(self, Form, event_id=None):
         Form.setObjectName("Form")
         Form.resize(440, 481)
 
@@ -123,15 +124,42 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.repeat_count_widget.setGeometry(QtCore.QRect(290, 330, 42, 22))
         self.repeat_count_widget.setMinimum(1)  # Set the minimum value to 1
         
-        # OK Button
-        self.ok_button_widget = QtWidgets.QPushButton(self.widget)
-        self.ok_button_widget.setGeometry(QtCore.QRect(20, 360, 93, 28))
+        # Comfirm Button
+        self.comfirm_button_widget = QtWidgets.QPushButton(self.widget)
+        self.comfirm_button_widget.setGeometry(QtCore.QRect(20, 360, 93, 28))
+
+        # Delete Button
+        self.delete_button_widget = QtWidgets.QPushButton(self.widget)
+        self.delete_button_widget.setGeometry(QtCore.QRect(120, 360, 93, 28))
 
         # Cancel Button
         self.cancel_button_widget = QtWidgets.QPushButton(self.widget)
         self.cancel_button_widget.setGeometry(QtCore.QRect(230, 360, 93, 28))
 
         self.retranslate_ui(Form)
+
+        # Load data into the frame if any event_id is given.
+        if event_id is not None:
+            # Get a target item
+            event_items = event_search(str(event_id), "id")
+            if len(event_items) < 1:
+                QtWidgets.QMessageBox.warning(Form, "No Item Found for the given ID.")
+                Form.close()
+                return False
+            target_event = event_items[0]
+            self.event_title_text.setText(target_event[1])
+            self.start_date_widget.setDate(QtCore.QDate.fromString(target_event[2], "yyyy-MM-dd"))
+            self.end_date_widget.setDate(QtCore.QDate.fromString(target_event[3], "yyyy-MM-dd"))
+            self.start_time_widget.setTime(QtCore.QTime.fromString(target_event[4], "hh:mm"))
+            self.end_date_widget.setTime(QtCore.QTime.fromString(target_event[5], "hh:mm"))
+            self.description_text.setText(target_event[6])
+            self.location_text.setText(target_event[7])
+            index = self.repeat_every_widget.findText(target_event[8])
+            if index >= 0:
+                self.repeat_every_widget.setCurrentIndex(index)
+            index = self.repeat_pattern_widget.findText(target_event[9])
+            if index >= 0:
+                self.repeat_pattern_widget.setCurrentIndex(index)
 
         # if there is any change in the repeat_count, repeat_pattern, or repeat_every, update the label
         self.update_labels()
@@ -143,19 +171,20 @@ class CreateEventPopup(QtWidgets.QWidget):
         def on_ok_button_clicked():
             if check_valid_input(self.event_title_text):
                 if check_start_end_date(self.start_date_widget.date(), self.end_date_widget.date()) == True:
-                    if self.repeat_pattern_widget.currentText() == "Daily":
-                        self.insert_event_daily(self.get_input_from_user()) # insert event into table
-                    elif self.repeat_pattern_widget.currentText() == "Weekly": 
-                        self.insert_event_weekly(self.get_input_from_user()) # insert event into table
-                    elif self.repeat_pattern_widget.currentText() == "Monthly":
-                        self.insert_event_monthly(self.get_input_from_user())
-                    else: # Yearly
-                        self.d(self.get_input_from_user())
-                        self.insert_event_yearly(self.get_input_from_user()) # insert event into table
+                    self.insert_event_types(self.get_input_from_user(), self.repeat_pattern_widget.currentText())
+                    # if self.repeat_pattern_widget.currentText() == "Daily":
+                    #     self.insert_event_daily(self.get_input_from_user()) # insert event into table
+                    # elif self.repeat_pattern_widget.currentText() == "Weekly": 
+                    #     self.insert_event_weekly(self.get_input_from_user()) # insert event into table
+                    # elif self.repeat_pattern_widget.currentText() == "Monthly":
+                    #     self.insert_event_monthly(self.get_input_from_user())
+                    # else: # Yearly
+                    #     self.d(self.get_input_from_user())
+                    #     self.insert_event_yearly(self.get_input_from_user()) # insert event into table
                     Form.close()
 
         # Connect the OK button click event to the slot
-        self.ok_button_widget.clicked.connect(on_ok_button_clicked)
+        self.comfirm_button_widget.clicked.connect(on_ok_button_clicked)
 
         # Connect the Cancel button click event to the slot
         self.cancel_button_widget.clicked.connect(Form.close)
@@ -173,7 +202,8 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.label_repeat_pattern.setText("Repeat Pattern?")
         self.label_repeat_every.setText("Repeat Every?")
         self.label_ends_after.setText("Ends After")
-        self.ok_button_widget.setText("OK")
+        self.comfirm_button_widget.setText("Confirm")
+        self.delete_button_widget.setText("Delete")
         self.cancel_button_widget.setText("CANCEL")      
 
     # Update Repeat Every Widget (days of the week)
