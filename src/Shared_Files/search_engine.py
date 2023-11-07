@@ -34,3 +34,10 @@ def event_range_search(start_date, end_date):
         selected_events = cursor.fetchall()
         return selected_events
 
+def event_search_recurring(id, order_by="start_date"):
+    with connection:
+        cursor.execute("""SELECT * FROM events
+                          WHERE id = ? ORDER BY ? ASC;""",
+                          (id, order_by))
+        selected_events = cursor.fetchall()
+        return selected_events
