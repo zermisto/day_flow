@@ -16,6 +16,8 @@ from Shared_Files.Classes.all_classes import eventClass
 connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()    #creating cursor object
 
+print(connection, cursor)
+
 with connection:    #creating table called events
     cursor.execute(
         """CREATE TABLE IF NOT EXISTS events (
@@ -82,14 +84,10 @@ def test_code():
     event1.name = "Sports Day 2023"
     edit_event(event1)
 
-# print("\n*********************************\n")
-# # # search for all events
-# cursor.execute("SELECT * FROM events")
-# for row in cursor.fetchall():
-#     print(row)
-
-
- 
+def close_all():
+    cursor.close()
+    connection.commit()
+    connection.close()
  
 
 

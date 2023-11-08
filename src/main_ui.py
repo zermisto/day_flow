@@ -9,7 +9,7 @@ including these features
 most functionalities involve a lot on user interfaces
 
 Created by Roong 19 October 2023
-Last update Mhon 5th November 2023
+Last update Mhon 8th November 2023
 """
 
 # Built-in
@@ -19,14 +19,16 @@ import calendar
 # external libraries
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
-import pdb
 # Our libraries
+import Database.sqlite_demo as sqlite
 import Shared_Files.search_engine as search_engine
 from Export_Event.export_button_popup import ExportEventPopup
 from create_event_popup import CreateEventPopup
+# Debugger
+import faulthandler
+faulthandler.enable()
 
 # Constant
-ITEM_THRESHOLD = 1440
 AM_PM = ["AM", "PM"]
 DAYS_A_WEEK = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
 HOURS_A_DAY = 24
@@ -49,13 +51,12 @@ month_index = today.month
 first_day_index = today.replace(day=1).weekday()
 to_edit_event_id = -1
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(757, 654)
         
-        # Initialize variables
+        # Initialize containers
         self.month_buttons_container: list = []
         self.week_buttons_container: list = []
         self.day_buttons_container: list = []
@@ -494,14 +495,13 @@ class Ui_Form(object):
 
         # Load all today display
         self.move_to_targetdate(today)
-        # week_buttons_container[0].addItem("hello")
-        # week_buttons_container[33].addItem("hello")
 
     def clear_buttons_lists(self):
         self.month_buttons_container.clear()
         self.week_buttons_container.clear()
-        self.day_buttons_container.clear()
-        print("here")
+        self.day_buttons_container.clear()   
+        sqlite.close_all()
+         
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
