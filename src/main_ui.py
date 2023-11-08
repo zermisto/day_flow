@@ -49,6 +49,8 @@ month_index = today.month
 first_day_index = today.replace(day=1).weekday()
 to_edit_event_id = -1
 
+sqlite.build_table()
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")

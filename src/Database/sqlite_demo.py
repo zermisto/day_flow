@@ -16,23 +16,22 @@ from Shared_Files.Classes.all_classes import eventClass
 connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()    #creating cursor object
 
-print(connection, cursor)
-
-with connection:    #creating table called events
-    cursor.execute(
-        """CREATE TABLE IF NOT EXISTS events (
-            id integer, 
-            name text, 
-            start_date text,
-            end_date text,
-            start_time text,
-            end_time text,
-            description text,
-            location text,
-            repeat_every text, 
-            repeat_pattern text,
-            repeat_count integer
-        )""")
+def build_table():
+    with connection:    #creating table called events
+        cursor.execute(
+            """CREATE TABLE IF NOT EXISTS events (
+                id integer, 
+                name text, 
+                start_date text,
+                end_date text,
+                start_time text,
+                end_time text,
+                description text,
+                location text,
+                repeat_every text, 
+                repeat_pattern text,
+                repeat_count integer
+            )""")
     # cursor.execute(
     #     """DROP TABLE events
     #     """
