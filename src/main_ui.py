@@ -25,8 +25,6 @@ import Shared_Files.search_engine as search_engine
 from Export_Event.export_button_popup import ExportEventPopup
 from create_event_popup import CreateEventPopup
 # Debugger
-import faulthandler
-faulthandler.enable()
 
 # Constant
 AM_PM = ["AM", "PM"]
@@ -192,9 +190,9 @@ class Ui_Form(object):
 
         # Current day label
         self.currentDayLabel = QtWidgets.QLabel(Form)
-        self.currentDayLabel.setGeometry(QtCore.QRect(450, 10, 241, 31))
+        self.currentDayLabel.setGeometry(QtCore.QRect(350, 10, 241, 31))
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(18)
         self.currentDayLabel.setFont(font)
         self.currentDayLabel.setObjectName("currentDayLabel")
 

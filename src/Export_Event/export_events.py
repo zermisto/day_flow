@@ -19,7 +19,6 @@ cursor = connection.cursor()    #creating cursor object
 def export_events_to_csv(export_event_data):
 
     #export the file to dir Exported_Files
-    
     filename = "Exported_Files/" + export_event_data.filename + ".csv"
     start_date = export_event_data.start_date
     end_date = export_event_data.end_date
@@ -31,27 +30,28 @@ def export_events_to_csv(export_event_data):
 
     if (check_event_timeframe(selected_events) == False):
         return
-    
-    with open(filename, mode='w', newline='') as csv_file: 
-        fieldnames = ['ID', 'Name', 'Start Date', 'End Date', 'Start Time', 'End Time', 
-                      'Description', 'Location', 'Repeat Every', 'Repeat Pattern', 'Repeat Count']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)   
-        writer.writeheader()
-        for event in selected_events:
-            writer.writerow({
-                'ID': event[0],
-                'Name': event[1],
-                'Start Date': event[2],
-                'End Date': event[3],
-                'Start Time': event[4],
-                'End Time': event[5],
-                'Description': event[6],
-                'Location': event[7],
-                'Repeat Every': event[8],
-                'Repeat Pattern': event[9],
-                'Repeat Count': event[10]
-            })
-    
+    try:
+        with open(filename, mode='w', newline='') as csv_file: 
+            fieldnames = ['ID', 'Name', 'Start Date', 'End Date', 'Start Time', 'End Time', 
+                        'Description', 'Location', 'Repeat Every', 'Repeat Pattern', 'Repeat Count']
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)   
+            writer.writeheader()
+            for event in selected_events:
+                writer.writerow({
+                    'ID': event[0],
+                    'Name': event[1],
+                    'Start Date': event[2],
+                    'End Date': event[3],
+                    'Start Time': event[4],
+                    'End Time': event[5],
+                    'Description': event[6],
+                    'Location': event[7],
+                    'Repeat Every': event[8],
+                    'Repeat Pattern': event[9],
+                    'Repeat Count': event[10]
+                })
+    except Exception as e:
+        print("Error: " + e)
     print(f"Selected events have been exported to '{filename}'.")
 
 
