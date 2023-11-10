@@ -44,7 +44,7 @@ def check_valid_input(text_name):
         msg.setIcon(QtWidgets.QMessageBox.Warning)
         msg.exec_()
         return False
-    elif any(not c.isalnum() and c not in ('-', '_') for c in name):
+    elif any(not c.isalnum() and c not in ('-', '_', ' ') for c in name):
         # Check for non-alphanumeric characters in the event title
         msg = QtWidgets.QMessageBox()
         msg.setWindowTitle("Error")
