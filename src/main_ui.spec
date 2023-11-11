@@ -5,7 +5,7 @@ a = Analysis(
     ['main_ui.py'],
     pathex=[],
     binaries=[],
-    datas=[('Database\\eventDB.db', '.')],
+    datas=[('Database/eventDB.db', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

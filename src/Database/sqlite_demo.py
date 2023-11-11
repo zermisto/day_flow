@@ -12,27 +12,34 @@ import sys
 import os
 import shutil
 
-db_name = "eventDB.db" # creating database file called eventDB.db 
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    db_path = os.path.join(sys._MEIPASS, db_name)
-    print("db_path: " + db_path)
-    print("sys.executable: " + sys.executable)
-    print("sys.argv[0]: " + sys.argv[0])
-    
-    #join the sys.executable path with the db_name
-    destination_path = os.path.join(os.path.dirname(sys.executable), db_name)
-    if not os.path.exists(destination_path):
-        shutil.copy2(db_path, destination_path)
-        print("Copied," + db_name, "to", destination_path)
+def find_db_path():
+    db_name = "eventDB.db"
+    destination_path = ""
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        db_path = os.path.join(sys._MEIPASS, db_name)
+        print("db_path: " + db_path)
+        print("sys.executable: " + sys.executable)
+        print("sys.argv[0]: " + sys.argv[0])
+        
+        #join the sys.executable path with the db_name
+        destination_path = os.path.join(os.path.dirname(sys.executable), db_name)
+        if not os.path.exists(destination_path):
+            shutil.copy2(db_path, destination_path)
+            print("Copied," + db_name, "to", destination_path)
+        else:
+            print(f"Database file not found at {db_path}")
+        
+        return destination_path
     else:
-        print(f"Database file not found at {db_path}")
+        print("Not frozen")
+        destination_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), db_name)
+        print("destinationpath is: ", destination_path)
 
-else:
-    print("Not frozen")
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), db_name)
+        return destination_path
 
 # Creating a connection object to the specified database file
-print(destination_path)
+# connection = create_connection()
+destination_path = find_db_path()
 connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 

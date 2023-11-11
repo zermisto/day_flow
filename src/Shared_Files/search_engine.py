@@ -13,10 +13,12 @@ Last update Mhon 5th November 2023
 import sqlite3
 import sys
 import os
+import Database.sqlite_demo as sqlite
 
-destination_path = os.path.join(os.path.dirname(sys.executable), "eventDB.db")
+destination_path = sqlite.find_db_path()
 connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
+
 search_types = ["name", "start_date", "end_date", "start_time", "end_time"]
 
 def event_search(pattern, type="name", maximum_items = 5):

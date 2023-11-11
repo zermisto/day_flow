@@ -50,6 +50,8 @@ month_index = today.month
 first_day_index = today.replace(day=1).weekday()
 to_edit_event_id = -1
 
+#build the table if it doesn't exist
+sqlite.build_table()
 
 class Ui_Form(object):
     """

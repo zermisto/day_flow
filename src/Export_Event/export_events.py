@@ -12,8 +12,9 @@ import csv
 from Shared_Files.user_input_validation import check_event_timeframe
 import os
 import sys
+import Database.sqlite_demo as sqlite
 
-destination_path = os.path.join(os.path.dirname(sys.executable), "eventDB.db")
+destination_path = sqlite.find_db_path()
 connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 
