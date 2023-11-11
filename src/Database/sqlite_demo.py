@@ -8,13 +8,33 @@ Created by King, 1st October 2023
 
 import sqlite3  
 from Shared_Files.Classes.all_classes import eventClass
+import sys
+import os
+import shutil
 
-# creating database file called eventDB.db 
-# (change to eventDB.db to :memory: to create a database in RAM for testing)
+db_name = "eventDB.db" # creating database file called eventDB.db 
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    db_path = os.path.join(sys._MEIPASS, db_name)
+    print("db_path: " + db_path)
+    print("sys.executable: " + sys.executable)
+    print("sys.argv[0]: " + sys.argv[0])
+    
+    #join the sys.executable path with the db_name
+    destination_path = os.path.join(os.path.dirname(sys.executable), db_name)
+    if not os.path.exists(destination_path):
+        shutil.copy2(db_path, destination_path)
+        print("Copied," + db_name, "to", destination_path)
+    else:
+        print(f"Database file not found at {db_path}")
+
+else:
+    print("Not frozen")
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), db_name)
 
 # Creating a connection object to the specified database file
-connection = sqlite3.connect("Database/eventDB.db")
-cursor = connection.cursor()    #creating cursor object
+print(destination_path)
+connection = sqlite3.connect(destination_path)
+cursor = connection.cursor()
 
 def build_table():
     with connection:    #creating table called events
