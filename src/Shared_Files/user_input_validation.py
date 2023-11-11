@@ -8,10 +8,8 @@ Created by King, 31th October 2023
 
 from PyQt5 import QtCore, QtWidgets
 
-
 # Check Character Limit
 # Checks the character limit of the text in the QTextEdit
-
 
 def check_char_limit(text_name, char_limit):
     if len(text_name.toPlainText()) > char_limit:

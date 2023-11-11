@@ -10,9 +10,12 @@ Created by Mhon, 10th October 2023
 Last update Mhon 5th November 2023
 """
 
-import  sqlite3
+import sqlite3
+import sys
+import os
 
-connection = sqlite3.connect("Database/eventDB.db")
+destination_path = os.path.join(os.path.dirname(sys.executable), "eventDB.db")
+connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 search_types = ["name", "start_date", "end_date", "start_time", "end_time"]
 

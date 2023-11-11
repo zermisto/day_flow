@@ -10,8 +10,11 @@ from Shared_Files.Classes.all_classes import eventClass
 from Database.sqlite_demo import insert_event, remove_event
 from Shared_Files.search_engine import event_search_recurring
 from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
+import os
+import sys
 
-connection = sqlite3.connect("Database/eventDB.db")
+destination_path = os.path.join(os.path.dirname(sys.executable), "eventDB.db")
+connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 
 class CreateEventPopup(QtWidgets.QWidget):
