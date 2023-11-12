@@ -10,4 +10,17 @@ Personal Calendar App (created by King, Roong, Mhon, Toiek)
 * Delete events
 * Export events for a specified date range in CSV format
 
-# Problem Definition
+# Installation instructions
+For Windows:  https://drive.google.com/file/d/1eg2OxFt8lgSHxKKrKPKJdiTUFYsBhxgK/view?usp=sharing
+Download the zip file from this google drive link
+Click “download anyways”
+Extract or unzip the file
+Run main_ui.exe in the unzipped folder
+click on "more info" and run anyways
+
+For Linux: https://drive.google.com/file/d/1ouAvK_22kmsVSRz5hGEOHRuzi3gQ6pfZ/view?usp=sharing
+Download the zip file form this google drive link
+Extract or unzip the file
+Run the executable file called “main_ui” in the unzipped folder
+      3.1) Alternatively, you can also run the executable by going into the directory of the unzipped folder and type in the terminal:
+./main_ui
