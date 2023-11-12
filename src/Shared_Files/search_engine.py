@@ -9,10 +9,15 @@ including these function
 Created by Mhon, 10th October 2023
 """
 
-import  sqlite3
+import sqlite3
+import sys
+import os
+import Database.sqlite_demo as sqlite
 
-connection = sqlite3.connect("Database/eventDB.db")
+destination_path = sqlite.find_db_path()
+connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
+
 search_types = ["name", "start_date", "end_date", "start_time", "end_time"]
 
 """ Search for the event by the pattern

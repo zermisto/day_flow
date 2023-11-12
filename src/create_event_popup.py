@@ -11,8 +11,12 @@ from Shared_Files.Classes.all_classes import eventClass
 from Database.sqlite_demo import insert_event, remove_event
 from Shared_Files.search_engine import event_search_recurring
 from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
+import os
+import sys
+import Database.sqlite_demo as sqlite
 
-connection = sqlite3.connect("Database/eventDB.db")
+destination_path = sqlite.find_db_path()
+connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 
 """ Create a class for the create event popup window

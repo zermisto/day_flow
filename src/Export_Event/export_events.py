@@ -7,14 +7,16 @@ Ask the user for a start date, end date, and CSV file name
 Created by Toiek, 4th October 2023
 """
 
-import os
 import sqlite3
 import csv
 from Shared_Files.user_input_validation import check_event_timeframe
+import os
+import sys
+import Database.sqlite_demo as sqlite
 
-connection = sqlite3.connect("Database/eventDB.db")    #creating connection object
-
-cursor = connection.cursor()    #creating cursor object
+destination_path = sqlite.find_db_path()
+connection = sqlite3.connect(destination_path)
+cursor = connection.cursor()
 
 """ Export events within a date range to a CSV file
     Ask the user for a start date, end date, and CSV file name

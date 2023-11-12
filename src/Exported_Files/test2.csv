@@ -1,0 +1,6 @@
+ID,Name,Start Date,End Date,Start Time,End Time,Description,Location,Repeat Every,Repeat Pattern,Repeat Count
+1,Sports Day 2023,2023-09-27,2023-09-27,09:00,17:00,Sports Day,Sports Hall,Once,Once,0
+61887,My_test_1,2023-11-05,2023-11-05,00:25,00:25,yee,haa,Tue,Yearly,1
+1495,Meeting,2023-10-05,2023-10-05,09:00,17:00,Meeting,Meeting Room,Wed,Daily,2
+1495,Meeting,2023-10-06,2023-10-06,09:00,17:00,Meeting,Meeting Room,Wed,Daily,2
+41163,Sport_day,2023-09-11,2023-09-11,01:44,01:44,Sport,No,Mon,Daily,1
