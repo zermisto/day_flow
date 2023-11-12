@@ -506,7 +506,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Day Flow"))
         for i, view in enumerate(VIEWS):
             self.view_by.setItemText(i, _translate("Form", view))
         for i, searchCat in enumerate([
