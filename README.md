@@ -20,7 +20,7 @@ For Windows:
 * click on "more info" and run anyways
 
 For Linux: 
-https://drive.google.com/file/d/1ouAvK_22kmsVSRz5hGEOHRuzi3gQ6pfZ/view?usp=sharing
+* https://drive.google.com/file/d/1ouAvK_22kmsVSRz5hGEOHRuzi3gQ6pfZ/view?usp=sharing
 * Download the zip file form this google drive link
 * Extract or unzip the file
 * Run the executable file called “main_ui” in the unzipped folder
