@@ -11,7 +11,7 @@ Personal Calendar App (created by King, Roong, Mhon, Toiek)
 * Export events for a specified date range in CSV format
 
 # Installation instructions
-For Windows:  
+For Linux:  
 * https://drive.google.com/drive/folders/18HeSMBkF1bKNYOR4HmvdUgX3KCtDfKwW?usp=sharing
 * Download the zip file from this google drive link
 * Click “download anyways”
@@ -19,7 +19,7 @@ For Windows:
 * Run main_ui.exe in the unzipped folder
 * click on "more info" and run anyways
 
-For Linux: 
+For Windows: 
 * https://drive.google.com/drive/folders/1VDbRlSSS6HPhzB04okIO9m-jGQ2qUQJB?usp=sharing
 * Download the zip file form this google drive link
 * Extract or unzip the file
