@@ -61,7 +61,7 @@ class Ui_Form(object):
     """
     def setup_Ui(self, Form):
         Form.setObjectName("Form")
-        Form.resize(757, 654)
+        Form.setFixedSize(757, 654)
 
         # Initialize containers
         self.month_lists_container: list = []
@@ -204,9 +204,9 @@ class Ui_Form(object):
 
         # Current day label
         self.current_day_label = QtWidgets.QLabel(Form)
-        self.current_day_label.setGeometry(QRect(450, 10, 241, 31))
+        self.current_day_label.setGeometry(QRect(380, 10, 241, 31))
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(10)
         self.current_day_label.setFont(font)
         self.current_day_label.setObjectName("current_day_label")
 
@@ -584,7 +584,7 @@ class Ui_Form(object):
         self.create_event_button.setText(_translate("Form", "Create"))
         self.search_box.setPlaceholderText(_translate("Form", "Search Event"))
         self.export_button.setText(_translate("Form", "Export"))
-        self.current_day_label.setText(_translate("Form", "{} {} {}"
+        self.current_day_label.setText(_translate("Form", "Today is {} {} {}"
         .format(today.day, MONTHS[today.month - 1], today.year)))
 
         # Load all today display

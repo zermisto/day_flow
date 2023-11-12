@@ -11,25 +11,18 @@ from Shared_Files.Classes.all_classes import eventClass
 import sys
 import os
 import shutil
+import Database.sqlite_demo as sqlite
 
 """creating database file called eventDB.db 
     (change to eventDB.db to :memory: to create a database in RAM for testing)
 
      Creating a connection object to the specified database file"""
-connection = sqlite3.connect("Database/eventDB.db")
-cursor = connection.cursor()    #creating cursor object
-
 
 def find_db_path():
     db_name = "eventDB.db"
     destination_path = ""
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         db_path = os.path.join(sys._MEIPASS, db_name)
-        print("db_path: " + db_path)
-        print("sys.executable: " + sys.executable)
-        print("sys.argv[0]: " + sys.argv[0])
-        
-        #join the sys.executable path with the db_name
         destination_path = os.path.join(os.path.dirname(sys.executable), db_name)
         if not os.path.exists(destination_path):
             shutil.copy2(db_path, destination_path)
