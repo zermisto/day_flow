@@ -12,7 +12,7 @@ Personal Calendar App (created by King, Roong, Mhon, Toiek)
 
 # Installation instructions
 For Windows:  
-* https://drive.google.com/file/d/1eg2OxFt8lgSHxKKrKPKJdiTUFYsBhxgK/view?usp=sharing
+* https://drive.google.com/drive/folders/18HeSMBkF1bKNYOR4HmvdUgX3KCtDfKwW?usp=sharing
 * Download the zip file from this google drive link
 * Click “download anyways”
 * Extract or unzip the file
@@ -20,7 +20,7 @@ For Windows:
 * click on "more info" and run anyways
 
 For Linux: 
-* https://drive.google.com/file/d/1ouAvK_22kmsVSRz5hGEOHRuzi3gQ6pfZ/view?usp=sharing
+* https://drive.google.com/drive/folders/1VDbRlSSS6HPhzB04okIO9m-jGQ2qUQJB?usp=sharing
 * Download the zip file form this google drive link
 * Extract or unzip the file
 * Run the executable file called “main_ui” in the unzipped folder
