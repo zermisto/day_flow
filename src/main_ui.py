@@ -54,9 +54,8 @@ to_edit_event_id = -1
 class Ui_Form(object):
     """
     Create a blank UI components initialize objects
-    Arguments
-        -self   - The UI form
-        -form   - The main widget
+    arguments:
+        Form is the main widget
     """
     def setup_Ui(self, Form):
         Form.setObjectName("Form")
@@ -223,6 +222,8 @@ class Ui_Form(object):
     """
     Move the the current date which will
     refresh all displays and replace it with a updated one
+    arguments:
+        input_date is the target date
     """
     def move_to_targetdate(self, input_date: datetime.date):
         # Refresh all frames
@@ -326,8 +327,8 @@ class Ui_Form(object):
 
     """
     Refresh the day display frame
-    Arguments
-        target_date     - the target date
+    aguments:
+        target_date is the target date
     """
     def refresh_day_display(self, target_date):
         day = target_date.day
@@ -339,8 +340,8 @@ class Ui_Form(object):
 
     """
     Refresh the week display frame
-    Arguments
-        target_date     - the target date
+    arguments:
+        target_date is the target date
     """
     def refresh_week_display(self, target_date):
         for i, day in enumerate(DAYS_A_WEEK):
@@ -357,8 +358,8 @@ class Ui_Form(object):
 
     """
     Refresh the month display frame
-    Arguments
-        target_date     - the target date
+    arguments:
+        target_date is the target date
     """
     def refresh_month_display(self, target_day: datetime.date):
         _translate = QtCore.QCoreApplication.translate
@@ -434,8 +435,8 @@ class Ui_Form(object):
     """
     Move to the target frame when the
     result item in the search frame has been clicked
-    Arguments
-        item    - list item object 
+    arguments:
+        item is the list item object
     """
     def on_search_result_clicked(self, item):
         if item is not None: # handle deleted items
@@ -454,8 +455,8 @@ class Ui_Form(object):
     """
     Move to the target frame when the
     event item in the search frame has been clicked
-    Arguments
-        item    - list item object 
+    arguments:
+        item is the list item object 
     """
     def item_clicked(self, item):
         if item is not None: # handle deleted items

@@ -1,6 +1,7 @@
-# create_event.py
-# Create Event Function GUI for the Personal Calendar Application
-# Created by King, 19th October 2023
+""" create_event.py
+ Create Event Function GUI for the Personal Calendar Application
+ Created by King, 19th October 2023
+"""
 
 from PyQt5 import QtCore, QtWidgets
 import sqlite3
@@ -14,7 +15,26 @@ from Shared_Files.user_input_validation import check_char_limit, check_valid_inp
 connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()
 
+""" Create a class for the create event popup window
+    The popup window will ask the user to input 
+    the event title, start date, end date, start time, end time, 
+    description, location, repeat pattern, repeat every, repeat count
+    The popup window will also have an 
+    OK button, a Delete button and a Cancel button
+    The OK button will call the insert_event function to 
+    insert the event to the database
+    The Delete button will call the remove_event function 
+    to delete the event from the database
+    The Cancel button will close the popup window
+"""
 class CreateEventPopup(QtWidgets.QWidget):
+    """ Set up the UI for the create event popup window
+        Set up the UI elements for the popup window
+        Set up the title for the popup window
+        arguements:
+        Form is the popup window
+        event_id is the id of the event
+    """
     def set_up_ui(self, Form, event_id=None):
         Form.setObjectName("Form")
         Form.resize(440, 481)
@@ -92,7 +112,8 @@ class CreateEventPopup(QtWidgets.QWidget):
         # Repeat Pattern
         self.repeat_pattern_widget = QtWidgets.QComboBox(self.widget)
         self.repeat_pattern_widget.setGeometry(QtCore.QRect(10, 310, 73, 22))
-        self.repeat_pattern_widget.addItems(["Daily", "Weekly", "Monthly", "Yearly"])
+        self.repeat_pattern_widget.addItems(
+            ["Daily", "Weekly", "Monthly", "Yearly"])
        
         # Label Repeat Every
         self.label_repeat_every = QtWidgets.QLabel(self.widget)
@@ -101,7 +122,8 @@ class CreateEventPopup(QtWidgets.QWidget):
         # Repeat Every
         self.repeat_every_widget = QtWidgets.QComboBox(self.widget)
         self.repeat_every_widget.setGeometry(QtCore.QRect(120, 310, 73, 22))
-        self.repeat_every_widget.addItems(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
+        self.repeat_every_widget.addItems(
+            ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
 
         # Label Repeat Count
         self.label_repeat_count = QtWidgets.QLabel(self.widget)
@@ -143,16 +165,21 @@ class CreateEventPopup(QtWidgets.QWidget):
             # Get a target item
             event_items = event_search_recurring(str(event_id), "id")
             if len(event_items) < 1:
-                QtWidgets.QMessageBox.warning(Form, "No Item Found for the given ID.")
+                QtWidgets.QMessageBox.warning(
+                    Form, "No Item Found for the given ID.")
                 Form.close()
                 return False
             first_event = event_items[0]
             last_event = event_items[-1]
             self.event_title_text.setText(first_event[1])
-            self.start_date_widget.setDate(QtCore.QDate.fromString(first_event[2], "yyyy-MM-dd"))
-            self.end_date_widget.setDate(QtCore.QDate.fromString(last_event[3], "yyyy-MM-dd"))
-            self.start_time_widget.setTime(QtCore.QTime.fromString(first_event[4], "hh:mm"))
-            self.end_time_widget.setTime(QtCore.QTime.fromString(last_event[5], "hh:mm"))
+            self.start_date_widget.setDate(QtCore.QDate.fromString
+                                           (first_event[2], "yyyy-MM-dd"))
+            self.end_date_widget.setDate(QtCore.QDate.fromString
+                                         (last_event[3], "yyyy-MM-dd"))
+            self.start_time_widget.setTime(QtCore.QTime.fromString
+                                           (first_event[4], "hh:mm"))
+            self.end_time_widget.setTime(QtCore.QTime.fromString
+                                         (last_event[5], "hh:mm"))
             self.description_text.setText(first_event[6])
             self.location_text.setText(first_event[7])
             index = self.repeat_every_widget.findText(first_event[8])
@@ -163,33 +190,48 @@ class CreateEventPopup(QtWidgets.QWidget):
                 self.repeat_pattern_widget.setCurrentIndex(index)
             self.repeat_count_widget.setValue(first_event[10])
 
-        # if there is any change in the repeat_count, repeat_pattern, or repeat_every, update the label
+        """ if there is any change in the repeat_count, 
+            repeat_pattern, or repeat_every, update the label
+        """
         self.update_labels()
         self.repeat_pattern_widget.currentTextChanged.connect(self.update_labels)
         self.repeat_every_widget.currentTextChanged.connect(self.update_labels)
         self.repeat_count_widget.valueChanged.connect(self.update_labels)
 
-        # OK Button Clicked
+        """ OK Button Clicked
+            Check if the input from the user is valid
+            Check if the start date is before the end date
+            Insert the event to the database
+            Close the popup window
+        """
         def on_comfirm_button_clicked():
             if event_id is not None:
                 remove_event(event_id)
             if check_valid_input(self.event_title_text):
-                if check_start_end_date(self.start_date_widget.date(), self.end_date_widget.date()) == True:
-                    self.insert_event_types(self.get_input_from_user(), self.repeat_pattern_widget.currentText())
+                if check_start_end_date(self.start_date_widget.date(), 
+                                        self.end_date_widget.date()) == True:
+                    self.insert_event_types(self.get_input_from_user(), 
+                                            self.repeat_pattern_widget.currentText())
                     Form.close()
 
         # Connect the OK button click event to the slot
         self.comfirm_button_widget.clicked.connect(on_comfirm_button_clicked)
 
+        """ Delete Button Clicked
+            Remove the event from the database
+            Close the popup window
+        """
         def on_delete_button_clicked():
             # Create a popup window to confirm the deletion
             msg = QtWidgets.QMessageBox()
             msg.setWindowTitle("Delete Event")
             msg.setText("Are you sure you want to delete this event?")
             msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Yes 
+                                   | QtWidgets.QMessageBox.No)
             msg.setDefaultButton(QtWidgets.QMessageBox.No)
-            msg.buttonClicked.connect(lambda x: remove_event(event_id) if x.text() == "&Yes" else None)
+            msg.buttonClicked.connect(lambda x: remove_event(event_id) 
+                                      if x.text() == "&Yes" else None)
             msg.exec_()
             Form.close()
 
@@ -200,8 +242,11 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.cancel_button_widget.clicked.connect(Form.close)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    # Retranslate UI
-    # Sets the text and title of the widgets
+    """ Retranslate UI
+        Sets the text and title of the widgets
+        arguements:
+        Form is the popup window
+    """
     def retranslate_ui(self, Form):
         Form.setWindowTitle("Form")
         self.label_start_date.setText("Start Date")
@@ -216,7 +261,10 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.delete_button_widget.setText("Delete")
         self.cancel_button_widget.setText("CANCEL")      
 
-    # Update Repeat Every Widget (days of the week)
+    """ Update Repeat Every Widget (days of the week)
+        Update the repeat_every_widget to the day of the week 
+        of the start date
+    """
     def update_repeat_every(self):
         new_date = self.start_date_widget.date()
         start_date = new_date.toString("yyyy-MM-dd")
@@ -229,39 +277,49 @@ class CreateEventPopup(QtWidgets.QWidget):
                 break
         self.repeat_every_widget.setCurrentIndex(i)
 
-    # Update Labels (Repeat Pattern, Repeat Every, Repeat Count)
+    """ Update Labels (Repeat Pattern, Repeat Every, Repeat Count)
+        Update the labels for the repeat pattern, repeat every and repeat count
+        Return the repeat pattern, repeat count and create_event_repeat_count
+    """
     def update_labels(self):
         repeat_pattern = self.repeat_pattern_widget.currentText()
         repeat_count = self.repeat_count_widget.value()
         create_event_repeat_count = repeat_count - 1
         
-        if repeat_pattern == "Daily":   
-            self.repeat_every_widget.setDisabled(True)   # disable the repeat_every_widget
+        if repeat_pattern == "Daily":
+            # disable the repeat_every_widget 
+            self.repeat_every_widget.setDisabled(True)   
             
             if repeat_count == 1: # enddate = startdate 
                 self.end_date_widget.setDate(self.start_date_widget.date())
             else: # enddate = startdate + repeat_count - 1
                 create_event_repeat_count = repeat_count - 1
-                self.end_date_widget.setDate(self.start_date_widget.date().addDays(create_event_repeat_count))
+                self.end_date_widget.setDate(self.start_date_widget.date().
+                                             addDays(create_event_repeat_count))
         else:
             self.repeat_every_widget.setDisabled(False) 
         
         if repeat_pattern == "Weekly":
             self.update_repeat_every()
-            self.end_date_widget.setDate(self.start_date_widget.date().addDays(7*create_event_repeat_count))
+            self.end_date_widget.setDate(self.start_date_widget.date().
+                                         addDays(7*create_event_repeat_count))
 
         if repeat_pattern == "Monthly":
             self.update_repeat_every()
-            self.end_date_widget.setDate(self.start_date_widget.date().addMonths(create_event_repeat_count))
+            self.end_date_widget.setDate(self.start_date_widget.date().
+                                         addMonths(create_event_repeat_count))
 
         if repeat_pattern == "Yearly":
             self.update_repeat_every()
-            self.end_date_widget.setDate(self.start_date_widget.date().addYears(create_event_repeat_count))
+            self.end_date_widget.setDate(self.start_date_widget.date().
+                                         addYears(create_event_repeat_count))
 
         return repeat_pattern, repeat_count, create_event_repeat_count
             
-    # Get Input From User
-    # Gets the input from the user and returns an event object
+    """ Get Input From User
+        Gets the input from the user and returns an event object
+        Return the event object
+    """
     def get_input_from_user(self):
         id = uuid.uuid4().int & (1 << 16)-1  # 16-bit random id
         event_name = self.event_title_text.toPlainText()  
@@ -281,7 +339,8 @@ class CreateEventPopup(QtWidgets.QWidget):
             repeat_count = self.repeat_count_widget.value()    
 
         event_data = eventClass(id, event_name, start_date, end_date, start_time,
-                                end_time, description, location, repeat_every, repeat_pattern, repeat_count)
+                                end_time, description, location, repeat_every, 
+                                repeat_pattern, repeat_count)
         return event_data
     
     def insert_event_types(self, event, repeat_interval):

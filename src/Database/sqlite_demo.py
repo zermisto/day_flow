@@ -9,10 +9,10 @@ Created by King, 1st October 2023
 import sqlite3  
 from Shared_Files.Classes.all_classes import eventClass
 
-# creating database file called eventDB.db 
-# (change to eventDB.db to :memory: to create a database in RAM for testing)
+"""creating database file called eventDB.db 
+    (change to eventDB.db to :memory: to create a database in RAM for testing)
 
-# Creating a connection object to the specified database file
+     Creating a connection object to the specified database file"""
 connection = sqlite3.connect("Database/eventDB.db")
 cursor = connection.cursor()    #creating cursor object
 
@@ -37,11 +37,11 @@ def build_table():
     #     """
     # )
     
-# repeat_every can be "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
-# repeat_pattern can be "D", "W", "M", "Y" (daily, weekly, monthly, yearly)
-# repeat_count is the number of times the event repeats (0 for infinite)
+""" repeat_every can be "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+ repeat_pattern can be "D", "W", "M", "Y" (daily, weekly, monthly, yearly)
+ repeat_count is the number of times the event repeats (0 for infinite)
 
-# insert event into table
+ insert event into table"""
 def insert_event(event):
     with connection:
         cursor.execute("""INSERT INTO events VALUES (:id, :name, :start_date, :end_date, :start_time, :end_time, :description,
@@ -51,7 +51,8 @@ def insert_event(event):
                         'repeat_every': event.repeat_every, 'repeat_pattern': event.repeat_pattern,
                         'repeat_count': event.repeat_count})
     
-# edit event in table
+""" edit event in table 
+"""
 def edit_event(event):
     with connection:
         cursor.execute("""UPDATE events SET name=:name, start_date=:start_date, end_date=:end_date, start_time=:start_time,
@@ -63,12 +64,14 @@ def edit_event(event):
                         'location': event.location, 'repeat_every': event.repeat_every, 'repeat_pattern': event.repeat_pattern,
                         'repeat_count': event.repeat_count})
         
-# remove event from table using id
+""" remove event from table using id
+"""
 def remove_event(id):
     with connection:
         cursor.execute("DELETE from events WHERE id = ?", (id,))
     
-## TEST CODE ##
+""" TEST CODE 
+"""
 def test_code():
     # update event in table
     event1 = eventClass(1, 'Sports Day', '2023-09-27', '2023-09-27', '09:00', '17:00', 'Sports Day', 'Sports Hall', 'Once', 'Once', 0)
@@ -83,6 +86,8 @@ def test_code():
     event1.name = "Sports Day 2023"
     edit_event(event1)
 
+"""  close cursor and connection
+"""
 def close_all():
     cursor.close()
     connection.commit()

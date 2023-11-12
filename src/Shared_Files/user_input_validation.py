@@ -6,13 +6,16 @@ Contains all functions for validating user input
 Created by King, 31th October 2023
 """
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 
 
-# Check Character Limit
-# Checks the character limit of the text in the QTextEdit
-
-
+""" Check Character Limit
+Checks the character limit of the text in the QTextEdit
+If the character limit is exceeded, the text color will change to red
+arguements:
+text_name is the name of the QTextEdit
+char_limit is the character limit
+"""
 def check_char_limit(text_name, char_limit):
     if len(text_name.toPlainText()) > char_limit:
         text_name.setStyleSheet("color: red")  # Set the text color to red
@@ -30,10 +33,13 @@ def check_char_limit(text_name, char_limit):
     elif len(text_name.toPlainText()) < char_limit:
         text_name.setStyleSheet("color: black")  # Set the text color to black
 
-# Check Valid Input
-# Checks if the user input is valid
 
-
+""" Check Valid Input
+Checks if the user input is valid
+(not empty and contains only alphanumeric characters)
+arguements:
+text_name is the name of the QTextEdit
+"""
 def check_valid_input(text_name):
     name = text_name.toPlainText()
     if name == "":
@@ -55,12 +61,13 @@ def check_valid_input(text_name):
     else:
         return True
 
-### For export_button_popup.py ###
 
-# Check start date and end date
-# Checks if the start date is before the end date (valid)
-
-
+""" Check start date and end date
+Checks if the start date is before the end date (valid)
+arguements:
+start_date is the start date
+end_date is the end date
+"""
 def check_start_end_date(start_date, end_date):
     if start_date > end_date:
         msg = QtWidgets.QMessageBox()
@@ -73,10 +80,12 @@ def check_start_end_date(start_date, end_date):
     else:
         return True
 
-# Check event timeframe
-# Checks if there are events within the specified date range
 
-
+""" Check event timeframe
+Checks if there are events within the specified date range
+arguements:
+    selected_events is the list of events within the specified date range
+"""
 def check_event_timeframe(selected_events):
     if not selected_events:  # if selected_events is empty
         msg = QtWidgets.QMessageBox()
