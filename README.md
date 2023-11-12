@@ -1,5 +1,10 @@
 # day_flow
-Personal Calendar App (created by King, Roong, Mhon, Toiek)
+Personal Calendar App 
+- Tatchphol Charoensupthaworn (Toiek)  
+- Panupong Dangkajitpetch (King)   
+- Krittin Kamolpornwijit (Roong) 
+- Nathadon Samairat (Mhon)  
+
 
 # Personal Calendar App
 ### This software allows the user to do the following:
