@@ -181,7 +181,7 @@ class Ui_Form(object):
 
         # Search text box
         self.search_box = QtWidgets.QLineEdit(Form)
-        self.search_box.setGeometry(QRect(20, 10, 240, 31))
+        self.search_box.setGeometry(QRect(15, 10, 245, 31))
         self.search_box.setText("")
         self.search_box.setObjectName("search_box")
         self.search_box.setMaxLength(100)
@@ -571,7 +571,7 @@ class Ui_Form(object):
                 self.month_display.setItem(i, j, item)
                 # Add list
                 eventList = QtWidgets.QListWidget()
-                temp_style = "margin-top: 15px; background-color: transparent;"
+                temp_style = "margin-top: 23px; background-color: transparent;"
                 eventList.setStyleSheet(temp_style)
                 self.month_display.setCellWidget(i, j, eventList)
                 eventList.itemClicked.connect(self.item_clicked)
