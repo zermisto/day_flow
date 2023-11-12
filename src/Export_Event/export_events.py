@@ -18,8 +18,9 @@ destination_path = sqlite.find_db_path()
 connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 
-""" Export events within a date range to a CSV file
-    Ask the user for a start date, end date, and CSV file name
+""" 
+Export events within a date range to a CSV file
+Ask the user for a start date, end date, and CSV file name
 """
 def export_events_to_csv(export_event_data):
 
@@ -27,9 +28,10 @@ def export_events_to_csv(export_event_data):
     if not os.path.exists("Exported_Files"): 
         os.mkdir("Exported_Files")
         
-    """ Get the filename, start date and end date from the user input
-        Export the events to a csv file
-        export the file to directory Exported_Files
+    """ 
+    Get the filename, start date and end date from the user input
+    Export the events to a csv file
+    export the file to directory Exported_Files
     """
     filename = "Exported_Files/" + export_event_data.filename + ".csv"
     start_date = export_event_data.start_date

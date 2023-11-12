@@ -17,15 +17,16 @@ import Database.sqlite_demo as sqlite
 destination_path = sqlite.find_db_path()
 connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
-
 search_types = ["name", "start_date", "end_date", "start_time", "end_time"]
 
 """ Search for the event by the pattern
     arguments:
-    The pattern can be the name, start date, end date, start time, end time
-    The type is the type of the pattern
-    The maximum_items is the maximum number of the items that will be returned
-    The default value of maximum_items is 5
+        type        - The pattern can be the name, start_date, end_date, start_time, end_time
+        pattern     - Pattern to search
+        maximumitem - The maximum_items is the maximum number of
+                    the items that will be returned 
+    return:
+        selected_events     - list of all desired events
 """
 def event_search(pattern, type="name", maximum_items = 5):
     with connection:
@@ -40,8 +41,10 @@ def event_search(pattern, type="name", maximum_items = 5):
     
 """ Search for the event by the range of the date
     arguments:
-    The start_date is the start date of the range
-    The end_date is the end date of the range
+        start_date  - The start_date is the start date of the range
+        end_date    - The end_date is the end date of the range
+    return:
+        selected_events     - list of all desired events
 """
 def event_range_search(start_date, end_date):
     with connection:
@@ -53,9 +56,11 @@ def event_range_search(start_date, end_date):
 
 """ Search for the recurring event by the id
     arguments:
-    The id is the id of the event
-    The order_by is the order of the event
-    The default value of order_by is start_date
+        id          - The id is the id of the event
+        order_by    - The order_by is the order of the event
+                    The default value of order_by is start_date
+    return:
+        selected_events     - list of all desired events
 """
 def event_search_recurring(id, order_by="start_date"):
     with connection:

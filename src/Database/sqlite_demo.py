@@ -13,11 +13,11 @@ import os
 import shutil
 import Database.sqlite_demo as sqlite
 
-"""creating database file called eventDB.db 
-    (change to eventDB.db to :memory: to create a database in RAM for testing)
-
-     Creating a connection object to the specified database file"""
-
+"""
+creating database file called eventDB.db 
+(change to eventDB.db to :memory: to create a database in RAM for testing)
+Creating a connection object to the specified database file
+"""
 def find_db_path():
     db_name = "eventDB.db"
     destination_path = ""
@@ -40,12 +40,12 @@ def find_db_path():
         return destination_path
 
 # Creating a connection object to the specified database file
-# connection = create_connection()
 destination_path = find_db_path()
 connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 
-"""creating table called events
+"""
+creating table called events
 """
 def build_table():
     with connection:    #creating table called events
@@ -65,13 +65,15 @@ def build_table():
             )""")
  
     
-""" repeat_every can be "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
-    repeat_pattern can be "D", "W", "M", "Y" (daily, weekly, monthly, yearly)
-    repeat_count is the number of times the event repeats (0 for infinite)"""
+""" 
+repeat_every can be "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+repeat_pattern can be "D", "W", "M", "Y" (daily, weekly, monthly, yearly)
+repeat_count is the number of times the event repeats (0 for infinite)"""
 
-""" insert event into table
-    arguments:
-    event is an eventClass object
+""" 
+insert event into table
+arguments:
+    event - an eventClass object
 """
 def insert_event(event):
     with connection:
@@ -86,9 +88,10 @@ def insert_event(event):
                         'repeat_every': event.repeat_every, 'repeat_pattern': event.repeat_pattern,
                         'repeat_count': event.repeat_count})
     
-""" edit event in table
-    arguments:
-    event is an eventClass object
+""" 
+edit event in table
+arguments:
+    event - an eventClass object
 """
 def edit_event(event):
     with connection:
@@ -105,17 +108,19 @@ def edit_event(event):
                         'location': event.location, 'repeat_every': event.repeat_every, 
                         'repeat_pattern': event.repeat_pattern, 'repeat_count': event.repeat_count})
         
-""" remove event from table using id
-    arguments:
-    id is an integer
+""" 
+remove event from table using id
+arguments:
+    id  - an integer
 """
 def remove_event(id):
     with connection:
         cursor.execute("DELETE from events WHERE id = ?", (id,))
     
-""" TEST CODE 
-    creating 3 events and inserting them into the table
-    then updating the first event
+""" 
+TEST CODE 
+creating 3 events and inserting them into the table
+then updating the first event
 """
 def test_code():
     # update event in table

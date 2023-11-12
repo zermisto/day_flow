@@ -53,6 +53,11 @@ to_edit_event_id = -1
 #build the table if it doesn't exist
 sqlite.build_table()
 
+"""
+Main class consists of all ui components in the main page
+,for example, the search box, the date label, create event button
+etc.
+"""
 class Ui_Form(object):
     """
     Create a blank UI components initialize objects
@@ -504,6 +509,13 @@ class Ui_Form(object):
             object.setVisible(False)
         objects[index].setVisible(True)
 
+    """ 
+    Retranslate UI
+    Sets initialize the properties of the UI including
+    text title and so on
+    arguments:
+        Form    - the popup window
+    """
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Day Flow"))

@@ -1,6 +1,8 @@
-""" create_event.py
- Create Event Function GUI for the Personal Calendar Application
- Created by King, 19th October 2023
+""" 
+create_event.py
+Create Event Function GUI for the Personal Calendar Application
+
+Created by King, 19th October 2023
 """
 
 from PyQt5 import QtCore, QtWidgets
@@ -32,12 +34,13 @@ cursor = connection.cursor()
     The Cancel button will close the popup window
 """
 class CreateEventPopup(QtWidgets.QWidget):
-    """ Set up the UI for the create event popup window
-        Set up the UI elements for the popup window
-        Set up the title for the popup window
-        arguements:
-        Form is the popup window
-        event_id is the id of the event
+    """ 
+    Set up the UI for the create event popup window
+    Set up the UI elements for the popup window
+    Set up the title for the popup window
+    arguments:
+        Form        - the popup window
+        event_id    - the id of the event
     """
     def set_up_ui(self, Form, event_id=None):
         Form.setObjectName("Form")
@@ -194,19 +197,21 @@ class CreateEventPopup(QtWidgets.QWidget):
                 self.repeat_pattern_widget.setCurrentIndex(index)
             self.repeat_count_widget.setValue(first_event[10])
 
-        """ if there is any change in the repeat_count, 
-            repeat_pattern, or repeat_every, update the label
+        """ 
+        if there is any change in the repeat_count, 
+        repeat_pattern, or repeat_every, update the label
         """
         self.update_labels()
         self.repeat_pattern_widget.currentTextChanged.connect(self.update_labels)
         self.repeat_every_widget.currentTextChanged.connect(self.update_labels)
         self.repeat_count_widget.valueChanged.connect(self.update_labels)
 
-        """ OK Button Clicked
-            Check if the input from the user is valid
-            Check if the start date is before the end date
-            Insert the event to the database
-            Close the popup window
+        """ 
+        OK Button Clicked
+        Check if the input from the user is valid
+        Check if the start date is before the end date
+        Insert the event to the database
+        Close the popup window
         """
         def on_comfirm_button_clicked():
             if event_id is not None:
@@ -221,9 +226,10 @@ class CreateEventPopup(QtWidgets.QWidget):
         # Connect the OK button click event to the slot
         self.comfirm_button_widget.clicked.connect(on_comfirm_button_clicked)
 
-        """ Delete Button Clicked
-            Remove the event from the database
-            Close the popup window
+        """ 
+        Delete Button Clicked
+        Remove the event from the database
+        Close the popup window
         """
         def on_delete_button_clicked():
             # Create a popup window to confirm the deletion
@@ -246,10 +252,12 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.cancel_button_widget.clicked.connect(Form.close)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    """ Retranslate UI
-        Sets the text and title of the widgets
-        arguements:
-        Form is the popup window
+    """ 
+    Retranslate UI
+    Sets initialize the properties of the UI including
+    text title and so on
+    arguments:
+        Form    - the popup window
     """
     def retranslate_ui(self, Form):
         Form.setWindowTitle("Form")
@@ -265,9 +273,10 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.delete_button_widget.setText("Delete")
         self.cancel_button_widget.setText("CANCEL")      
 
-    """ Update Repeat Every Widget (days of the week)
-        Update the repeat_every_widget to the day of the week 
-        of the start date
+    """ 
+    Update Repeat Every Widget (days of the week)
+    Update the repeat_every_widget to the day of the week 
+    of the start date
     """
     def update_repeat_every(self):
         new_date = self.start_date_widget.date()
@@ -281,9 +290,10 @@ class CreateEventPopup(QtWidgets.QWidget):
                 break
         self.repeat_every_widget.setCurrentIndex(i)
 
-    """ Update Labels (Repeat Pattern, Repeat Every, Repeat Count)
-        Update the labels for the repeat pattern, repeat every and repeat count
-        Return the repeat pattern, repeat count and create_event_repeat_count
+    """ 
+    Update Labels (Repeat Pattern, Repeat Every, Repeat Count)
+    Update the labels for the repeat pattern, repeat every and repeat count
+    return the repeat pattern, repeat count and create_event_repeat_count
     """
     def update_labels(self):
         repeat_pattern = self.repeat_pattern_widget.currentText()
@@ -320,9 +330,10 @@ class CreateEventPopup(QtWidgets.QWidget):
 
         return repeat_pattern, repeat_count, create_event_repeat_count
             
-    """ Get Input From User
-        Gets the input from the user and returns an event object
-        Return the event object
+    """ 
+    Get Input From User
+    Gets the input from the user and returns an event object
+    return the event object
     """
     def get_input_from_user(self):
         id = uuid.uuid4().int & (1 << 16)-1  # 16-bit random id
@@ -347,6 +358,13 @@ class CreateEventPopup(QtWidgets.QWidget):
                                 repeat_pattern, repeat_count)
         return event_data
     
+    """ 
+    Insert event to the database 
+    also correct the date format
+    arguments
+        event           - target event class to be inserted
+        repeat_interval - string type of repetition
+    """
     def insert_event_types(self, event, repeat_interval):
         repeat_count = event.repeat_count
         id = event.id
