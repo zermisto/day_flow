@@ -8,7 +8,8 @@ Created by King, 19th October 2023
 from PyQt5 import QtCore, QtWidgets
 import sqlite3
 import uuid
-import datetime
+import time
+from datetime import datetime as Datetime
 from Shared_Files.Classes.all_classes import eventClass
 from Database.sqlite_demo import insert_event, remove_event
 from Shared_Files.search_engine import event_search_recurring
@@ -87,6 +88,7 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.end_date_widget.setGeometry(QtCore.QRect(230, 40, 91, 31))
         self.end_date_widget.setDisplayFormat("yyyy-MM-dd")
         self.end_date_widget.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.end_date_widget.dateChanged.connect(self.on_end_date_changed)
 
         # Label End Time
         self.label_end_time = QtWidgets.QLabel(self.widget)
@@ -121,6 +123,7 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.repeat_pattern_widget.setGeometry(QtCore.QRect(10, 310, 73, 22))
         self.repeat_pattern_widget.addItems(
             ["Daily", "Weekly", "Monthly", "Yearly"])
+        self.repeat_pattern_widget.currentIndexChanged.connect(self.on_end_date_changed)
        
         # Label Repeat Every
         self.label_repeat_every = QtWidgets.QLabel(self.widget)
@@ -131,27 +134,21 @@ class CreateEventPopup(QtWidgets.QWidget):
         self.repeat_every_widget.setGeometry(QtCore.QRect(120, 310, 73, 22))
         self.repeat_every_widget.addItems(
             ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
+        self.repeat_every_widget.setDisabled(True)
 
         # Label Repeat Count
         self.label_repeat_count = QtWidgets.QLabel(self.widget)
         self.label_repeat_count.setGeometry(QtCore.QRect(230, 290, 101, 20))
 
-        # Forever CheckBox
-        self.forever_widget = QtWidgets.QCheckBox(self.widget)
-        self.forever_widget.setGeometry(QtCore.QRect(230, 310, 91, 20))
-        self.forever_widget.setText("Forever")
-        # if user click forever, disable the spinBox
-        self.forever_widget.stateChanged.connect(
-            lambda: self.repeat_count_widget.setDisabled(self.forever_widget.isChecked()))
-
         # Ends After Label
         self.label_ends_after = QtWidgets.QLabel(self.widget)
-        self.label_ends_after.setGeometry(QtCore.QRect(230, 330, 61, 16))
+        self.label_ends_after.setGeometry(QtCore.QRect(230, 315, 61, 16))
 
         # Number of Event Occurrences SpinBox
         self.repeat_count_widget = QtWidgets.QSpinBox(self.widget)
-        self.repeat_count_widget.setGeometry(QtCore.QRect(290, 330, 42, 22))
+        self.repeat_count_widget.setGeometry(QtCore.QRect(290, 315, 42, 22))
         self.repeat_count_widget.setMinimum(1)  # Set the minimum value to 1
+        self.repeat_count_widget.setMaximum(9999)
         
         # Comfirm Button
         self.comfirm_button_widget = QtWidgets.QPushButton(self.widget)
@@ -282,13 +279,32 @@ class CreateEventPopup(QtWidgets.QWidget):
         new_date = self.start_date_widget.date()
         start_date = new_date.toString("yyyy-MM-dd")
         start_date = self.start_date_widget.date().toString("yyyy-MM-dd")
-        temp = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        temp = Datetime.strptime(start_date, '%Y-%m-%d')
         repeat_every = temp.strftime("%a") #Mon
         # for loop the days in the week where mon = 0 and sun = 6
         for i in range(7):
             if repeat_every == self.repeat_every_widget.itemText(i):
                 break
         self.repeat_every_widget.setCurrentIndex(i)
+
+    """ 
+    Update Repeat Every Widget coresponding with the
+    repeat count and repeat pattern
+    """
+    def on_end_date_changed(self):
+        repetition_type = self.repeat_pattern_widget.currentText()
+        if repetition_type == "Daily":
+            self.end_date_widget.setDisabled(False)
+            start_date = self.start_date_widget.date()
+            end_date = self.end_date_widget.date()
+            start_year, start_month, start_day = start_date.year(), start_date.month(), start_date.day()
+            end_year, end_month, end_day = end_date.year(), end_date.month(), end_date.day()
+            start_datetime = Datetime(start_year, start_month, start_day)
+            end_datetime = Datetime(end_year, end_month, end_day)
+            delta_days = (end_datetime - start_datetime).days + 1
+            self.repeat_count_widget.setValue(delta_days)
+        else:
+            self.end_date_widget.setDisabled(True)
 
     """ 
     Update Labels (Repeat Pattern, Repeat Every, Repeat Count)
@@ -301,18 +317,12 @@ class CreateEventPopup(QtWidgets.QWidget):
         create_event_repeat_count = repeat_count - 1
         
         if repeat_pattern == "Daily":
-            # disable the repeat_every_widget 
-            self.repeat_every_widget.setDisabled(True)   
-            
             if repeat_count == 1: # enddate = startdate 
                 self.end_date_widget.setDate(self.start_date_widget.date())
             else: # enddate = startdate + repeat_count - 1
                 create_event_repeat_count = repeat_count - 1
                 self.end_date_widget.setDate(self.start_date_widget.date().
                                              addDays(create_event_repeat_count))
-        else:
-            self.repeat_every_widget.setDisabled(False) 
-        
         if repeat_pattern == "Weekly":
             self.update_repeat_every()
             self.end_date_widget.setDate(self.start_date_widget.date().
@@ -344,15 +354,10 @@ class CreateEventPopup(QtWidgets.QWidget):
         end_time = self.end_time_widget.text()
         description = self.description_text.toPlainText()
         location = self.location_text.toPlainText()
-        forever = self.forever_widget.isChecked()
         repeat_pattern = self.repeat_pattern_widget.currentText()
         repeat_every = self.repeat_every_widget.currentText()
 
-        if forever:
-            repeat_count = -1
-        else:
-            repeat_count = self.repeat_count_widget.value()    
-
+        repeat_count = self.repeat_count_widget.value()    
         event_data = eventClass(id, event_name, start_date, end_date, start_time,
                                 end_time, description, location, repeat_every, 
                                 repeat_pattern, repeat_count)
