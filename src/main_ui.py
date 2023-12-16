@@ -21,7 +21,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt, QRect
 # Our libraries
-import Database.sqlite_demo as sqlite
+import Database.sqlite_demo as sqlite_func
 import Shared_Files.search_engine as search_engine
 from Export_Event.export_button_popup import ExportEventPopup
 from create_event_popup import CreateEventPopup
@@ -51,7 +51,7 @@ first_day_index = today.replace(day=1).weekday()
 to_edit_event_id = -1
 
 #build the table if it doesn't exist
-sqlite.build_table()
+sqlite_func.build_table()
 
 """
 Main class consists of all ui components in the main page
@@ -610,7 +610,7 @@ class Ui_Form(object):
         self.month_lists_container.clear()
         self.week_lists_container.clear()
         self.day_lists_container.clear()   
-        sqlite.close_all()
+        sqlite_func.close_all()
 
 
 if __name__ == "__main__":

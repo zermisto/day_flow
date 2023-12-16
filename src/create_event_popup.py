@@ -16,9 +16,9 @@ from Shared_Files.search_engine import event_search_recurring
 from Shared_Files.user_input_validation import check_char_limit, check_valid_input, check_start_end_date
 import os
 import sys
-import Database.sqlite_demo as sqlite
+import Database.sqlite_demo as sqlite_func
 
-destination_path = sqlite.find_db_path()
+destination_path = sqlite_func.find_db_path()
 connection = sqlite3.connect(destination_path)
 cursor = connection.cursor()
 

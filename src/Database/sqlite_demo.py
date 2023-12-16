@@ -11,7 +11,7 @@ from Shared_Files.Classes.all_classes import eventClass
 import sys
 import os
 import shutil
-import Database.sqlite_demo as sqlite
+import Database.sqlite_demo as sqlite_func
 
 """
 creating database file called eventDB.db 
@@ -143,6 +143,16 @@ def close_all():
     cursor.close()
     connection.commit()
     connection.close()
+
+# select all events from and print in rows
+def select_all():
+    cursor.execute("SELECT * FROM events")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
+
+# select all events from and print in rows
+select_all()
  
 
 
