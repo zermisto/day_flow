@@ -11,7 +11,6 @@ from Shared_Files.Classes.all_classes import eventClass
 import sys
 import os
 import shutil
-import Database.sqlite_demo as sqlite_func
 
 """
 creating database file called eventDB.db 
