@@ -34,7 +34,7 @@ def find_db_path():
         print("Not frozen")
         destination_path = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), db_name)
-        print("destinationpath is: ", destination_path)
+        print("destination path is: ", destination_path)
 
         return destination_path
 
@@ -142,22 +142,3 @@ def close_all():
     cursor.close()
     connection.commit()
     connection.close()
-
-# select all events from and print in rows
-def select_all():
-    cursor.execute("SELECT * FROM events")
-    rows = cursor.fetchall()
-    for row in rows:
-        print(row)
-
-# select all events from and print in rows
-select_all()
- 
-
-
-
-
-
-
-
-
